@@ -12,11 +12,13 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import view.controlers.EnterControler;
 
 public class MainWidnow extends Application {
         @Override
         public void start(Stage primaryStage) throws Exception {
             Parent root = FXMLLoader.load(getClass().getResource("fxmls/registration.fxml"));
+            //EnterControler enterControler = primaryStage
             primaryStage.setTitle("Hello World");
             primaryStage.initStyle(StageStyle.TRANSPARENT);
             Scene scene = new Scene(root);
