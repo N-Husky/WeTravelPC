@@ -28,6 +28,7 @@ public class MainWidnow extends Application {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
+        scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override

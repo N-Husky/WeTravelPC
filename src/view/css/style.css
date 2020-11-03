@@ -1,0 +1,32 @@
+
+.text-field {
+     -fx-background-color: #486ff9, #9bbaff;
+    -fx-background-insets: 0 0 -2 0, 0 0 0 0;
+    -fx-border-width: 0;
+    -fx-prompt-text-fill: #585858;
+    -fx-background-radius: 0, 0, 0, 0;
+    -fx-text-fill: black;
+}
+
+.text-field:focused {
+    -fx-background-color: #0d45ff, #9bbaff;
+    -fx-border-radius: 0;
+    -fx-prompt-text-fill: transparent;
+    -fx-background-insets: 0 0 -2 0, 0 0 0 0;
+}
+
+.password-field {
+    -fx-background-color: #486ff9, #9bbaff;
+    -fx-background-insets: 0 0 -2 0, 0 0 0 0;
+    -fx-border-width: 0;
+    -fx-prompt-text-fill: #585858;
+    -fx-background-radius: 0, 0, 0, 0;
+    -fx-text-fill: black;
+}
+
+.password-field:focused {
+    -fx-background-color: #0d45ff, #9bbaff;
+    -fx-border-radius: 0;
+    -fx-prompt-text-fill: transparent;
+    -fx-background-insets: 0 0 -2 0, 0 0 0 0;
+}
