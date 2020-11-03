@@ -54,6 +54,7 @@ public class EnterControler {
     public void registration_btn()  {
         forRegister();
     }
+
     private void forLogin() {
         if(!point)
             return;

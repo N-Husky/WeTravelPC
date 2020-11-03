@@ -4,16 +4,16 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane fx:id="back1" prefHeight="529.0" prefWidth="798.0" style="-fx-background-color: transparent;" styleClass="transparent" xmlns="http://javafx.com/javafx/8.0.261" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controlers.EnterControler">
+<AnchorPane fx:id="back1" prefHeight="477.0" prefWidth="634.0" style="-fx-background-color: transparent;" styleClass="transparent" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controlers.EnterControler">
    <children>
-      <AnchorPane fx:id="pane2" layoutX="285.0" layoutY="71.0" prefHeight="396.0" prefWidth="428.0" style="-fx-background-color: linear-gradient(to left bottom, #e7eefd, #d4e1fe, #c1d4fe, #aec7ff, #9bbaff); -fx-background-radius: 25;">
+      <AnchorPane fx:id="pane2" layoutX="203.0" layoutY="45.0" prefHeight="396.0" prefWidth="428.0" style="-fx-background-color: linear-gradient(to left bottom, #e7eefd, #d4e1fe, #c1d4fe, #aec7ff, #9bbaff); -fx-background-radius: 25;">
          <children>
             <Label fx:id="label" layoutX="166.0" layoutY="14.0" prefHeight="59.0" prefWidth="140.0" style="-fx-font-family: rubik;" text="Registration">
                <font>
                   <Font name="Bradley Hand ITC" size="24.0" />
                </font>
             </Label>
-            <TextField fx:id="email" layoutX="153.0" layoutY="83.0" prefHeight="37.0" prefWidth="261.0" promptText="Email address" />
+            <TextField fx:id="email" layoutX="153.0" layoutY="83.0" prefHeight="37.0" prefWidth="261.0" promptText="Email address" styleClass="style.css" />
             <TextField fx:id="password" layoutX="153.0" layoutY="137.0" prefHeight="37.0" prefWidth="261.0" promptText="Password" />
             <TextField fx:id="repeat_password" layoutX="153.0" layoutY="190.0" prefHeight="37.0" prefWidth="261.0" promptText="Repeat password" />
             <Button layoutX="214.0" layoutY="244.0" mnemonicParsing="false" onAction="#enter_btn" prefHeight="16.0" prefWidth="140.0" style="-fx-background-radius: 24; -fx-background-color: #4b54c7;" text="Let's travel!" textFill="WHITE">
@@ -35,7 +35,7 @@
          </children>
       </AnchorPane>
 
-      <AnchorPane fx:id="pane1" layoutX="85.0" layoutY="27.0" prefHeight="475.0" prefWidth="344.0" style="-fx-background-color: linear-gradient(to right top, #241044, #36246c, #433b98, #4b54c7, #486ff9); -fx-background-radius: 25;">
+      <AnchorPane fx:id="pane1" layoutX="3.0" layoutY="1.0" prefHeight="475.0" prefWidth="344.0" style="-fx-background-color: linear-gradient(to right top, #241044, #36246c, #433b98, #4b54c7, #486ff9); -fx-background-radius: 25;">
          <children>
 
             <Label layoutX="79.0" layoutY="271.0" style="-fx-font-family: rubik;" text="WeTravel" textFill="#f1eeff">

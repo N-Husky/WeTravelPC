@@ -1,6 +1,8 @@
 package view;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import net.thegreshams.firebase4j.service.Firebase;
 import javafx.application.Application;
@@ -15,20 +17,37 @@ import javafx.stage.StageStyle;
 import view.controlers.EnterControler;
 
 public class MainWidnow extends Application {
-        @Override
-        public void start(Stage primaryStage) throws Exception {
-            Parent root = FXMLLoader.load(getClass().getResource("fxmls/registration.fxml"));
-            //EnterControler enterControler = primaryStage
-            primaryStage.setTitle("Hello World");
-            primaryStage.initStyle(StageStyle.TRANSPARENT);
-            Scene scene = new Scene(root);
-            scene.setFill(Color.TRANSPARENT);
-            primaryStage.setScene(scene);
-            primaryStage.show();
-        }
 
+    private double xOffset = 0;
+    private double yOffset = 0;
 
-        public static void main(String[] args) {
-            launch(args);
-        }
-        }
+    @Override
+    public void start(final Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("fxmls/registration.fxml"));
+        primaryStage.setTitle("Hello World");
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+        Scene scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT);
+        primaryStage.setScene(scene);
+        primaryStage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = primaryStage.getX() - event.getScreenX();
+                yOffset = primaryStage.getY() - event.getScreenY();
+            }
+        });
+
+        primaryStage.getScene().setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                primaryStage.setX(event.getScreenX() + xOffset);
+                primaryStage.setY(event.getScreenY() + yOffset);
+            }
+        });
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
