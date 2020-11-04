@@ -65,6 +65,12 @@ public class EnterControler {
     private void forLogin() {
         if (!point)
             return;
+        eror1.setVisible(false);
+        eror2.setVisible(false);
+        eror3.setVisible(false);
+        password.setText("");
+        email.setText("");
+        repeat_password.setText("");
         repeat_password.setTranslateX(1000000);
         password.setTranslateY(30);
         email.setTranslateY(30);
@@ -77,6 +83,14 @@ public class EnterControler {
     private void forRegister() {
         if (point)
             return;
+        eror2.setTranslateY(0);
+        eror1.setTranslateY(0);
+        eror1.setVisible(false);
+        eror2.setVisible(false);
+        eror3.setVisible(false);
+        password.setText("");
+        email.setText("");
+        repeat_password.setText("");
         repeat_password.setTranslateX(0);
         password.setTranslateY(0);
         email.setTranslateY(0);
