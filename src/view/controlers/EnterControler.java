@@ -142,8 +142,8 @@ public class EnterControler {
         }
 
         if (password.getText().isEmpty()) {
-            eror1.setVisible(true);
-            eror1.setText("Введіть пароль");
+            eror2.setVisible(true);
+            eror2.setText("Введіть пароль");
             check = false;
         }
 
@@ -167,6 +167,5 @@ public class EnterControler {
         eror1.setVisible(false);
         eror2.setVisible(false);
         eror3.setVisible(false);
-
     }
 }
