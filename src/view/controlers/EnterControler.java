@@ -1,5 +1,13 @@
 package view.controlers;
 
+import com.google.api.core.ApiFuture;
+import com.google.api.gax.paging.Page;
+import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.WriteResult;
+import com.google.cloud.storage.*;
+import com.google.common.collect.Lists;
+import com.google.firebase.cloud.FirestoreClient;
+import com.google.firebase.cloud.StorageClient;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
@@ -9,11 +17,20 @@ import net.thegreshams.firebase4j.error.FirebaseException;
 import net.thegreshams.firebase4j.error.JacksonUtilityException;
 import net.thegreshams.firebase4j.model.FirebaseResponse;
 import net.thegreshams.firebase4j.service.Firebase;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.Firestore;
 
-import java.io.UnsupportedEncodingException;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,11 +58,56 @@ public class EnterControler {
 
     public void enter_btn() throws JacksonUtilityException, UnsupportedEncodingException, FirebaseException {
         if (point) {
-            if (!checkEverything()) return;
-            registration();
+            //if (!checkEverything()) return;
+            checkMailExistence(email.getText());//Тоже будет бросать exception если такой мейл есть в базе
+            //registration();
         } else {
-            if (!checkEverything()) return;
-            logining();
+            //if (!checkEverything()) return;
+            checkLoginPassword(email.getText(),password.getText());
+            //logining();
+        }
+    }
+
+    private void checkLoginPassword(String email, String password) throws FirebaseException, UnsupportedEncodingException {
+        //вместе с проверкой пароля в метод checkEverything
+        System.out.println(email);
+        Firebase firebase = new Firebase(firebase_baseUrl);
+        FirebaseResponse response = firebase.get();
+        Map<String, Object> dataMap = response.getBody();
+        dataMap = (Map) dataMap.get("users");
+        Set<String> codeKeys = dataMap.keySet();
+        for (String states : codeKeys) {
+            Map<String, Object> dataMap2 = (Map) dataMap.get(states);
+            System.out.println(dataMap2.toString());
+            if(dataMap2.containsValue(email)){
+                System.out.println("Found successfully");
+                if(dataMap2.containsValue(password)){
+                    System.out.println("Password accepted");
+                    return;
+                }
+                else break;
+            }
+        }
+        //THROWS EXCEPTION!!!
+        System.out.println("ERROR Password or login is invalid");
+    }
+
+    private void checkMailExistence(String email) throws FirebaseException, UnsupportedEncodingException {//Думаю лучше будет инкапсулировать этот метод
+        //вместе с проверкой пароля в метод checkEverything
+        System.out.println(email);
+        Firebase firebase = new Firebase(firebase_baseUrl);
+        FirebaseResponse response = firebase.get();
+        Map<String, Object> dataMap = response.getBody();
+        dataMap = (Map) dataMap.get("users");
+        Set<String> codeKeys = dataMap.keySet();
+        for (String states : codeKeys) {
+            Map<String, Object> dataMap2 = (Map) dataMap.get(states);
+            System.out.println(dataMap2.toString());
+            if(dataMap2.containsValue(email)){//THROWS EXCEPTION!!!
+                System.out.println("The email \"" + email + "\" already registered");
+                return;
+            }
+
         }
     }
 
@@ -54,15 +116,19 @@ public class EnterControler {
         stage.close();
     }
 
-    public void logining_btn() {
-        forLogin();
+    public void logining_btn() throws IOException, ExecutionException, InterruptedException {
+
+
+            forLogin();
     }
 
-    public void registration_btn() {
+    public void registration_btn() throws IOException {
+
         forRegister();
     }
 
     private void forLogin() {
+
         if (!point)
             return;
         eror1.setVisible(false);

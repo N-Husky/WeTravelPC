@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="firebase4j" target="6" />
+      <module name="firebase4j" target="7" />
     </bytecodeTargetLevel>
   </component>
 </project>
