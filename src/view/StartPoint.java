@@ -1,5 +1,6 @@
 package view;
 
+import MModel.User;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
@@ -68,10 +69,9 @@ public class StartPoint extends Application {
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/MainWindow.fxml"));
         stage.setScene(new Scene((Parent) loader.load()));
+        stage.setMaximized(true);
         MainWindow controller = loader.getController();
         controller.initialize();
-        stage.setTitle("Add wood");
-        stage.setResizable(false);
         stage.show();
     }
 }

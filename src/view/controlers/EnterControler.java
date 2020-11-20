@@ -1,5 +1,6 @@
 package view.controlers;
 
+import MModel.User;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -47,16 +48,18 @@ public class EnterControler {
 
 
     public void enter_btn() throws JacksonUtilityException, IOException, FirebaseException {
-        if (point) {
-            //if (!checkEverything()) return;
-            checkMailExistence(email.getText());//Тоже будет бросать exception если такой мейл есть в базе
-            //registration();
-        } else {
-            if (!checkEverything()) return;
-            checkLoginPassword(email.getText(),password.getText());
-            logining();
-            (new StartPoint()).startMainWindow();
-        }
+        onClose();
+        (new StartPoint()).startMainWindow();
+
+//        if (point) {
+//            //if (!checkEverything()) return;
+//            checkMailExistence(email.getText());//Тоже будет бросать exception если такой мейл есть в базе
+//            //registration();
+//        } else {
+//            if (!checkEverything()) return;
+//            checkLoginPassword(email.getText(),password.getText());
+//            logining();
+//        }
     }
 
     private void checkLoginPassword(String email, String password) throws FirebaseException, UnsupportedEncodingException {

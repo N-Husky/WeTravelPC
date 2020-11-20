@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.dlsc.gmapsfx.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="640.0" prefWidth="1087.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controlers.MainWindow">
+<AnchorPane id="AnchorPane" prefHeight="640.0" prefWidth="1151.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controlers.MainWindow">
     <children>
-        <GoogleMapView fx:id="mapView" prefHeight="640.0" prefWidth="1087.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <BorderPane prefHeight="640.0" prefWidth="1151.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <center>
+              <GoogleMapView fx:id="mapView" prefHeight="615.0" prefWidth="822.0" BorderPane.alignment="CENTER">
+               <children>
+                  <VBox fx:id="video_box" prefHeight="640.0" prefWidth="543.0" style="-fx-background-color: red; visibility: false;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Button mnemonicParsing="false" onMouseClicked="#hideVideo" prefHeight="29.0" prefWidth="36.0" text="X" />
+                     </children></VBox>
+               </children>
+            </GoogleMapView>
+         </center>
+         <left>
+             <VBox prefHeight="615.0" prefWidth="303.0" style="-fx-background-color: blue;" BorderPane.alignment="CENTER" />
+         </left>
+         <top>
+
+         </top>
+      </BorderPane>
     </children>
 </AnchorPane>
