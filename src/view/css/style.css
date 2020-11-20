@@ -3,8 +3,9 @@
      -fx-background-color: #486ff9, #9bbaff;
     -fx-background-insets: 0 0 -2 0, 0 0 0 0;
     -fx-border-width: 0;
-    -fx-prompt-text-fill: #585858;
     -fx-background-radius: 0, 0, 0, 0;
+    -fx-prompt-text-fill: #585858;
+
     -fx-text-fill: black;
 }
 
@@ -30,3 +31,4 @@
     -fx-prompt-text-fill: transparent;
     -fx-background-insets: 0 0 -2 0, 0 0 0 0;
 }
+

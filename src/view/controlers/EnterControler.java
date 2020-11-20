@@ -1,36 +1,25 @@
 package view.controlers;
 
-import com.google.api.core.ApiFuture;
-import com.google.api.gax.paging.Page;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.WriteResult;
-import com.google.cloud.storage.*;
-import com.google.common.collect.Lists;
-import com.google.firebase.cloud.FirestoreClient;
-import com.google.firebase.cloud.StorageClient;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import net.thegreshams.firebase4j.error.FirebaseException;
 import net.thegreshams.firebase4j.error.JacksonUtilityException;
 import net.thegreshams.firebase4j.model.FirebaseResponse;
 import net.thegreshams.firebase4j.service.Firebase;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.firestore.Firestore;
+import view.StartPoint;
 
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,17 +43,19 @@ public class EnterControler {
 
     private Pattern p = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{1,})$");
+    private Stage stage = new Stage();
 
 
-    public void enter_btn() throws JacksonUtilityException, UnsupportedEncodingException, FirebaseException {
+    public void enter_btn() throws JacksonUtilityException, IOException, FirebaseException {
         if (point) {
             //if (!checkEverything()) return;
             checkMailExistence(email.getText());//Тоже будет бросать exception если такой мейл есть в базе
             //registration();
         } else {
-            //if (!checkEverything()) return;
+            if (!checkEverything()) return;
             checkLoginPassword(email.getText(),password.getText());
-            //logining();
+            logining();
+            (new StartPoint()).startMainWindow();
         }
     }
 
@@ -116,9 +107,7 @@ public class EnterControler {
         stage.close();
     }
 
-    public void logining_btn() throws IOException, ExecutionException, InterruptedException {
-
-
+    public void logining_btn() throws IOException, InterruptedException {
             forLogin();
     }
 
