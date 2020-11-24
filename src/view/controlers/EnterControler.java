@@ -50,16 +50,15 @@ public class EnterControler {
     public void enter_btn() throws JacksonUtilityException, IOException, FirebaseException {
         onClose();
         (new StartPoint()).startMainWindow();
-
-//        if (point) {
-//            //if (!checkEverything()) return;
-//            checkMailExistence(email.getText());//Тоже будет бросать exception если такой мейл есть в базе
-//            //registration();
-//        } else {
-//            if (!checkEverything()) return;
-//            checkLoginPassword(email.getText(),password.getText());
-//            logining();
-//        }
+        if (point) {
+            if (!checkEverything()) return;
+            checkMailExistence(email.getText());//Тоже будет бросать exception если такой мейл есть в базе
+            registration();
+        } else {
+            if (!checkEverything()) return;
+            checkLoginPassword(email.getText(),password.getText());
+            logining();
+        }
     }
 
     private void checkLoginPassword(String email, String password) throws FirebaseException, UnsupportedEncodingException {
@@ -111,6 +110,8 @@ public class EnterControler {
     }
 
     public void logining_btn() throws IOException, InterruptedException {
+            email.setText("zmejka0@gmail.com");
+            password.setText("qqqqqqqq");
             forLogin();
     }
 
@@ -177,6 +178,7 @@ public class EnterControler {
         dataMap.put("Email", email.getText());
         dataMap.put("Password", password.getText());
         response = firebase.post("users", dataMap);
+        int i = 12313;
     }
 
     private boolean checkEverything() {

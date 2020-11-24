@@ -9,7 +9,10 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/.ideaLibSources/GMapsFX-8.0.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/dlsc/GMapsFX/8.0.0/GMapsFX-8.0.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.23/slf4j-api-1.7.23-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/ch/qos/logback/logback-classic/1.2.1/logback-classic-1.2.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/ch/qos/logback/logback-core/1.2.1/logback-core-1.2.1-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
