@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="java">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$USER_HOME$/Downloads/java-storage-master/google-cloud-storage/src/main/java" />
+      <root url="file://$USER_HOME$/Downloads/java-storage-master/google-cloud-storage/src/test/java" />
+      <root url="file://$USER_HOME$/Downloads/java-storage-master/samples/snippets/src/main/java" />
+      <root url="file://$USER_HOME$/Downloads/java-storage-master/samples/snippets/src/test/java" />
+    </SOURCES>
+  </library>
+</component>
