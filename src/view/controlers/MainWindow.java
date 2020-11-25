@@ -19,9 +19,11 @@ import netscape.javascript.JSObject;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class MainWindow extends Window implements MapComponentInitializedListener {
 
@@ -250,6 +252,13 @@ public class MainWindow extends Window implements MapComponentInitializedListene
         System.out.println(
                 "File " + filePath + " uploaded to bucket " + bucketName + " as " + objectName);
     }
+
+    //Put this URL into MediaView
+    public URL getTempStreamReference(BlobInfo blbInfo, Storage storage){
+        return storage.signUrl(blbInfo,2, TimeUnit.SECONDS, Storage.SignUrlOption.withV4Signature());
+    }
+
+
     public String getStringCoordinates(double latitude, double longitude) {
         return new StringBuilder().append(String.valueOf(latitude) + "/" + String.valueOf(longitude)).toString();
     }

@@ -3,6 +3,7 @@
 <?import com.dlsc.gmapsfx.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.media.*?>
 
 <AnchorPane id="AnchorPane" prefHeight="640.0" prefWidth="1151.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controlers.MainWindow">
     <children>
@@ -10,10 +11,11 @@
          <center>
               <GoogleMapView fx:id="mapView" prefHeight="615.0" prefWidth="822.0" BorderPane.alignment="CENTER">
                <children>
-                  <VBox fx:id="video_box" prefHeight="640.0" prefWidth="543.0" style="-fx-background-color: red; visibility: false;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <AnchorPane fx:id="anchorPane" prefHeight="640.0" prefWidth="543.0" style="-fx-background-color: red; visibility: true;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <Button mnemonicParsing="false" onMouseClicked="#hideVideo" prefHeight="29.0" prefWidth="36.0" text="X" />
-                     </children></VBox>
+                        <MediaView fx:id="videoView" fitHeight="200.0" fitWidth="200.0" layoutX="178.0" layoutY="190.0" />
+                     </children></AnchorPane>
                </children>
             </GoogleMapView>
          </center>

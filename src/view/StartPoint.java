@@ -20,6 +20,7 @@ import net.thegreshams.firebase4j.model.FirebaseResponse;
 import net.thegreshams.firebase4j.service.Firebase;
 import view.controlers.EnterControler;
 import view.controlers.MainWindow;
+import view.controlers.TestMedia;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -67,10 +68,10 @@ public class StartPoint extends Application {
 
     public void startMainWindow() throws IOException {
         Stage stage = new Stage();
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/MainWindow.fxml"));
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/TestMedia.fxml"));
         stage.setScene(new Scene((Parent) loader.load()));
         stage.setMaximized(true);
-        MainWindow controller = loader.getController();
+        TestMedia controller = loader.getController();
         controller.initialize();
         stage.show();
     }
