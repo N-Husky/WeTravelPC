@@ -149,6 +149,20 @@ public class MainWindow extends Window implements MapComponentInitializedListene
     public String getStringCoordinates(double latitude, double longitude) {
         return new StringBuilder().append(String.valueOf(latitude) + "/" + String.valueOf(longitude)).toString();
     }
+    public String getVideoPlayerLink(VideoMarker vm) throws IOException {//retrieve link for media player from videoMarker
+        FileInputStream stream = new FileInputStream("I:\\wetravel-1591a-1fa332112603.json");
+        GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
+                .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
+        stream.close();
+        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+        String bucketName = "wetravel-1591a.appspot.com";
+
+        Bucket bucket = storage.get(bucketName);
+        Page<Blob> blobs = bucket.list();
+        BlobId blobId = BlobId.of(bucketName, vm.getVideoReference());
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+        return storage.signUrl(blobInfo, 1, TimeUnit.MINUTES, Storage.SignUrlOption.withV4Signature()).toString();
+    }
 
     public void initialize() {
         mapView.addMapInitializedListener(this);
