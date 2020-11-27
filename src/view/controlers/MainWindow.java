@@ -36,60 +36,6 @@ public class MainWindow extends Window implements MapComponentInitializedListene
 
     @Override
     public void mapInitialized() {
-//        try {
-//            initializeMap(map);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        ArrayList<LatLong> list = new ArrayList<LatLong>();
-//        list.add(new LatLong(47.6197, -122.3231));
-//        list.add(new LatLong(47.6297, -122.3431));
-//        list.add(new LatLong(47.6397, -122.3231));
-//        list.add(new LatLong(47.6497, -122.3431));
-//        final MapOptions mapOptions = new MapOptions();
-//        mapOptions.center(new LatLong(47.6097, -122.3331))
-//                .overviewMapControl(false)
-//                .panControl(false)
-//                .rotateControl(false)
-//                .scaleControl(false)
-//                .streetViewControl(false)
-//                .zoomControl(false)
-//                .zoom(12)
-//                .minZoom(3);
-//
-//        map = mapView.createMap(mapOptions);
-//
-//        MarkerOptions markerOptions = new MarkerOptions();
-//
-//        for (LatLong u : list) {
-//            markerOptions.position(u);                                                      //введення позиції маркера
-//            final Marker marker = new Marker(markerOptions);
-//            marker.setTitle(u.toString());
-//
-//            map.addUIEventHandler(marker, UIEventType.click, new UIEventHandler() {
-//                @Override
-//                public void handle(JSObject jsObject) {
-//                    video_box.setVisible(true);
-//                }
-//            });
-//
-//            map.addUIEventHandler(marker, UIEventType.mouseover, new UIEventHandler() {
-//                @Override
-//                public void handle(JSObject jsObject) {
-//                    final InfoWindowOptions infoOptions = new InfoWindowOptions();
-//                    infoOptions.content(marker.getTitle());
-//                    final InfoWindow window = new InfoWindow(infoOptions);
-//                    window.open(map, marker);
-//                    map.addUIEventHandler(marker, UIEventType.mouseout, new UIEventHandler() {
-//                        @Override
-//                        public void handle(JSObject jsObject) {
-//                            window.close();
-//                        }
-//                    });
-//                }
-//            });
-//            map.addMarker(marker);
-//        }
         FileInputStream stream = null;
         try {
             stream = new FileInputStream("I:\\wetravel-1591a-1fa332112603.json");
@@ -115,7 +61,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
         String bucketName = "wetravel-1591a.appspot.com";
         // The ID of your GCS object
         Bucket bucket = storage.get(bucketName);
-        System.out.println(bucket.get("-MM7aIc-jFBHl_Qr33S8/ghhv").getMetadata().get("position"));
+        //System.out.println(bucket.get("-MM7aIc-jFBHl_Qr33S8/ghhv").getMetadata().get("position"));
         Page<Blob> pblob = bucket.list();
         final MapOptions mapOptions = new MapOptions();
         mapOptions.center(new LatLong(47.6097, -122.3331))
@@ -132,7 +78,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
 
         MarkerOptions markerOptions = new MarkerOptions();
         for (Blob blob : pblob.iterateAll()) {
-            if (blob.getName().split("/")[1] == "profile_img")
+            if (blob.getName().split("/")[1].equals("profile_img"))
                 continue;
             VideoMarker vidM = new VideoMarker(blob.getName(), blob.getName().split("/")[1], blob.getMetadata().get("position"));
             videos.put(blob.getName(), vidM);
@@ -166,66 +112,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
         }
     }
 
-    //private void initializeMap(GoogleMap map) throws IOException {
-//        FileInputStream stream = new FileInputStream("I:\\wetravel-1591a-1fa332112603.json");
-//        GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
-//                .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
-//        stream.close();
-//        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
-//        // The ID of your GCP project
-//        //String projectId = "wetravel-1591a";
-//        // The ID of your GCS bucket
-//        String bucketName = "wetravel-1591a.appspot.com";
-//        // The ID of your GCS object
-//        Bucket bucket = storage.get(bucketName);
-//        System.out.println(bucket.get("-MM7aIc-jFBHl_Qr33S8/ghhv").getMetadata().get("position"));
-//        Page<Blob> pblob = bucket.list();
-//        final MapOptions mapOptions = new MapOptions();
-//        mapOptions.center(new LatLong(47.6097, -122.3331))
-//                .overviewMapControl(false)
-//                .panControl(false)
-//                .rotateControl(false)
-//                .scaleControl(false)
-//                .streetViewControl(false)
-//                .zoomControl(false)
-//                .zoom(12)
-//                .minZoom(3);
-//
-//        map = mapView.createMap(mapOptions);
-//
-//        MarkerOptions markerOptions = new MarkerOptions();
-//        for(Blob blob : pblob.iterateAll()){
-//            VideoMarker vidM = new VideoMarker(blob.getName(), blob.getName().split("/")[1], blob.getMetadata().get("position"));
-//            videos.put(blob.getName(), vidM);
-//            markerOptions.position(new LatLong(vidM.getX(),vidM.getY()));                                                      //введення позиції маркера
-//            final Marker marker = new Marker(markerOptions);
-//            marker.setTitle(new LatLong(vidM.getX(),vidM.getY()).toString());
-//
-//            map.addUIEventHandler(marker, UIEventType.click, new UIEventHandler() {
-//                @Override
-//                public void handle(JSObject jsObject) {
-//                    video_box.setVisible(true);
-//                }
-//            });
-//
-//            map.addUIEventHandler(marker, UIEventType.mouseover, new UIEventHandler() {
-//                @Override
-//                public void handle(JSObject jsObject) {
-//                    final InfoWindowOptions infoOptions = new InfoWindowOptions();
-//                    infoOptions.content(marker.getTitle());
-//                    final InfoWindow window = new InfoWindow(infoOptions);
-//                    window.open(map, marker);
-//                    map.addUIEventHandler(marker, UIEventType.mouseout, new UIEventHandler() {
-//                        @Override
-//                        public void handle(JSObject jsObject) {
-//                            window.close();
-//                        }
-//                    });
-//                }
-//            });
-//            map.addMarker(marker);
-//        }
-    //}
+
     public void uploadVideo(String videoName, String pathToVideo, String coordinates) throws IOException {
         // FILE UPLOAD
         FileInputStream stream = new FileInputStream("I:\\wetravel-1591a-1fa332112603.json");

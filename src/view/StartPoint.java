@@ -68,10 +68,10 @@ public class StartPoint extends Application {
 
     public void startMainWindow() throws IOException {
         Stage stage = new Stage();
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/TestMedia.fxml"));
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/MainWindow.fxml"));
         stage.setScene(new Scene((Parent) loader.load()));
         stage.setMaximized(true);
-        TestMedia controller = loader.getController();
+        MainWindow controller = loader.getController();
         controller.initialize();
         stage.show();
     }

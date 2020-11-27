@@ -20,7 +20,7 @@ public class TestMedia {
     private MediaView videoView;
 
     public void initialize() throws IOException {
-        FileInputStream stream = new FileInputStream("D:\\Projects\\wetravel-1591a-1fa332112603.json");
+        FileInputStream stream = new FileInputStream("I:\\wetravel-1591a-1fa332112603.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
                 .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
         stream.close();
@@ -30,14 +30,16 @@ public class TestMedia {
 
         Bucket bucket = storage.get(bucketName);
         Page<Blob> blobs = bucket.list();
-        BlobId blobId = BlobId.of(bucketName,"-MM7aIc-jFBHl_Qr33S8/PVID2");
+        BlobId blobId = BlobId.of(bucketName, "-MM7aIc-jFBHl_Qr33S8/PVID2");
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-        URL url = storage.signUrl(blobInfo,2, TimeUnit.SECONDS, Storage.SignUrlOption.withV4Signature());
-        System.out.println(url.toExternalForm());
-
-        Media media = new Media(url.toExternalForm());
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.setAutoPlay(true);
-        videoView.setMediaPlayer(mediaPlayer);
+        URL url = storage.signUrl(blobInfo, 2, TimeUnit.SECONDS, Storage.SignUrlOption.withV4Signature());
+        System.out.println(url.toExternalForm() + "My Message");
+        System.out.println("My Message again woof");
+        synchronized (url) {
+            Media media = new Media(url.toExternalForm());
+            MediaPlayer mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.setAutoPlay(true);
+            videoView.setMediaPlayer(mediaPlayer);
+        }
     }
 }
