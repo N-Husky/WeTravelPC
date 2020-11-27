@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import netscape.javascript.JSObject;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
     public void mapInitialized() {
         FileInputStream stream = null;
         try {
-            stream = new FileInputStream("I:\\wetravel-1591a-1fa332112603.json");
+            stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -115,7 +116,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
 
     public void uploadVideo(String videoName, String pathToVideo, String coordinates) throws IOException {
         // FILE UPLOAD
-        FileInputStream stream = new FileInputStream("I:\\wetravel-1591a-1fa332112603.json");
+        FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
                 .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
         stream.close();
@@ -150,7 +151,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
         return new StringBuilder().append(String.valueOf(latitude) + "/" + String.valueOf(longitude)).toString();
     }
     public String getVideoPlayerLink(VideoMarker vm) throws IOException {//retrieve link for media player from videoMarker
-        FileInputStream stream = new FileInputStream("I:\\wetravel-1591a-1fa332112603.json");
+        FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
                 .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
         stream.close();

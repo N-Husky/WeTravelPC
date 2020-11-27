@@ -20,7 +20,7 @@ public class TestMedia {
     private MediaView videoView;
 
     public void initialize() throws IOException {
-        FileInputStream stream = new FileInputStream("I:\\wetravel-1591a-1fa332112603.json");
+        FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
                 .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
         stream.close();
