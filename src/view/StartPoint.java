@@ -14,6 +14,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import net.thegreshams.firebase4j.error.FirebaseException;
 import net.thegreshams.firebase4j.error.JacksonUtilityException;
 import net.thegreshams.firebase4j.model.FirebaseResponse;
@@ -21,6 +22,7 @@ import net.thegreshams.firebase4j.service.Firebase;
 import view.controlers.EnterControler;
 import view.controlers.MainWindow;
 import view.controlers.TestMedia;
+import view.controlers.VideoUpload;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -73,6 +75,16 @@ public class StartPoint extends Application {
         stage.setMaximized(true);
         MainWindow controller = loader.getController();
         controller.initialize();
+        stage.show();
+    }
+
+    public void startVideoUpload(Window window, String marker) throws IOException {
+        Stage stage = new Stage();
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/videoUpload.fxml"));
+        stage.setScene(new Scene((Parent) loader.load()));
+        stage.setMaximized(true);
+        VideoUpload controller = loader.getController();
+        controller.initialize(window, marker);
         stage.show();
     }
 }

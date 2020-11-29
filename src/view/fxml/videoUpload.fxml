@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="373.0" prefWidth="634.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controlers.VideoUpload">
+   <children>
+      <Label alignment="CENTER" layoutX="229.0" layoutY="14.0" prefHeight="36.0" prefWidth="176.0" text="Загрузка відео" textAlignment="CENTER">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Label>
+      <TextField fx:id="name_area" layoutX="192.0" layoutY="70.0" prefHeight="36.0" prefWidth="380.0">
+         <font>
+            <Font size="17.0" />
+         </font></TextField>
+      <Label layoutX="63.0" layoutY="70.0" prefHeight="36.0" prefWidth="93.0" text="Назва відео">
+         <font>
+            <Font size="17.0" />
+         </font>
+      </Label>
+      <Label layoutX="63.0" layoutY="117.0" prefHeight="36.0" prefWidth="93.0" text="Опис відео">
+         <font>
+            <Font size="17.0" />
+         </font>
+      </Label>
+      <TextArea fx:id="additional" layoutX="192.0" layoutY="117.0" prefHeight="192.0" prefWidth="380.0" text="Я устал&#10;А еще ето меня бесит">
+         <font>
+            <Font size="17.0" />
+         </font></TextArea>
+      <Button layoutX="264.0" layoutY="318.0" mnemonicParsing="false" onAction="#onUpload" prefHeight="36.0" prefWidth="125.0" style="-fx-background-radius: 666;" text="Підтвердити" />
+   </children>
+</AnchorPane>
