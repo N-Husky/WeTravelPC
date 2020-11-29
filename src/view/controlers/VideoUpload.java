@@ -1,5 +1,6 @@
 package view.controlers;
 
+import MModel.DataBaseAccess;
 import com.sun.jndi.toolkit.url.Uri;
 import com.sun.org.apache.xml.internal.utils.URI;
 import javafx.event.ActionEvent;
@@ -36,8 +37,10 @@ public class VideoUpload {
     public void onUpload() {
         if (name_area.getText()!=null) {
             try {
-                (new MainWindow()).uploadVideo("-MN5NE8UAFRPTR52M6JJ/" + name_area.getText(), file.getAbsolutePath(), cordinates);
+                DataBaseAccess.getInstance().uploadVideo(name_area.getText(), file.getAbsolutePath(), cordinates);
             } catch (IOException e) {
+            } catch (Exception e) {
+                return;
             }
         }
     }

@@ -1,10 +1,9 @@
 package MModel;
 
-import com.dlsc.gmapsfx.javascript.object.LatLong;
 
 public class VideoMarker {
-    String videoReference;
-    String videoName;
+    private String videoReference;
+    private String videoName;
     private double x;
     private double y;
     public VideoMarker(String videoReference, String videoName, String coordinates) {
@@ -16,7 +15,9 @@ public class VideoMarker {
     public String getVideoReference() {
         return videoReference;
     }
-
+    public static String getStringCoordinates(double latitude, double longitude) {
+        return new StringBuilder().append(String.valueOf(latitude) + "/" + String.valueOf(longitude)).toString();
+    }
     public String getVideoName() {
         return videoName;
     }

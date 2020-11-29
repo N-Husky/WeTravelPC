@@ -1,5 +1,6 @@
 package view.controlers;
 
+import MModel.DataBaseAccess;
 import MModel.User;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -36,8 +37,6 @@ public class EnterControler {
     public Label eror2;
     public Label eror1;
     public Label eror3;
-    private double xOffset;
-    private double yOffset;
     private boolean point = true;             // true - register    false - login
     public String firebase_baseUrl = "https://wetravel-1591a.firebaseio.com/";
     public String firebase_apiKey = "AIzaSyCO06MSKvbYLnPGzBYPKpX8SlcPpiJupA8";
@@ -48,59 +47,18 @@ public class EnterControler {
 
 
     public void enter_btn() throws JacksonUtilityException, IOException, FirebaseException {
-        onClose();
-        (new StartPoint()).startMainWindow();
         if (point) {
             if (!checkEverything()) return;
-            checkMailExistence(email.getText());//Тоже будет бросать exception если такой мейл есть в базе
-            registration();
+            if(DataBaseAccess.getInstance().instantiateUser(true ,email.getText().toString(), password.getText().toString()))
+                (new StartPoint()).startMainWindow();
+            System.out.println(DataBaseAccess.getInstance().getUser().getUserLogin());
+            onClose();
         } else {
             if (!checkEverything()) return;
-            checkLoginPassword(email.getText(),password.getText());
-            logining();
-        }
-    }
-
-    private void checkLoginPassword(String email, String password) throws FirebaseException, UnsupportedEncodingException {
-        //вместе с проверкой пароля в метод checkEverything
-        System.out.println(email);
-        Firebase firebase = new Firebase(firebase_baseUrl);
-        FirebaseResponse response = firebase.get();
-        Map<String, Object> dataMap = response.getBody();
-        dataMap = (Map) dataMap.get("users");
-        Set<String> codeKeys = dataMap.keySet();
-        for (String states : codeKeys) {
-            Map<String, Object> dataMap2 = (Map) dataMap.get(states);
-            System.out.println(dataMap2.toString());
-            if(dataMap2.containsValue(email)){
-                System.out.println("Found successfully");
-                if(dataMap2.containsValue(password)){
-                    System.out.println("Password accepted");
-                    return;
-                }
-                else break;
-            }
-        }
-        //THROWS EXCEPTION!!!
-        System.out.println("ERROR Password or login is invalid");
-    }
-
-    private void checkMailExistence(String email) throws FirebaseException, UnsupportedEncodingException {//Думаю лучше будет инкапсулировать этот метод
-        //вместе с проверкой пароля в метод checkEverything
-        System.out.println(email);
-        Firebase firebase = new Firebase(firebase_baseUrl);
-        FirebaseResponse response = firebase.get();
-        Map<String, Object> dataMap = response.getBody();
-        dataMap = (Map) dataMap.get("users");
-        Set<String> codeKeys = dataMap.keySet();
-        for (String states : codeKeys) {
-            Map<String, Object> dataMap2 = (Map) dataMap.get(states);
-            System.out.println(dataMap2.toString());
-            if(dataMap2.containsValue(email)){//THROWS EXCEPTION!!!
-                System.out.println("The email \"" + email + "\" already registered");
-                return;
-            }
-
+            if(DataBaseAccess.getInstance().instantiateUser(false ,email.getText().toString(), password.getText().toString()))
+                (new StartPoint()).startMainWindow();
+            System.out.println(DataBaseAccess.getInstance().getUser().getUserLogin());
+            onClose();
         }
     }
 
@@ -157,29 +115,7 @@ public class EnterControler {
         label.setText("Registration");
     }
 
-    private void logining() throws FirebaseException, UnsupportedEncodingException {
-        Firebase firebase = new Firebase(firebase_baseUrl);
-        FirebaseResponse response = firebase.get();
-        Map<String, Object> dataMap = response.getBody();
-        dataMap = (Map) dataMap.get("users");
-        Set<String> codeKeys = dataMap.keySet();
-        for (String states : codeKeys) {
-            Map<String, Object> dataMap2 = (Map) dataMap.get(states);
-            for (Map.Entry<String, Object> item : dataMap2.entrySet()) {
-                System.out.println(item.getValue());
-            }
-        }
-    }
 
-    private void registration() throws FirebaseException, UnsupportedEncodingException, JacksonUtilityException {
-        Firebase firebase = new Firebase(firebase_baseUrl);
-        FirebaseResponse response = firebase.get();
-        Map<String, Object> dataMap = new LinkedHashMap<String, Object>();
-        dataMap.put("Email", email.getText());
-        dataMap.put("Password", password.getText());
-        response = firebase.post("users", dataMap);
-        int i = 12313;
-    }
 
     private boolean checkEverything() {
         boolean check = true;

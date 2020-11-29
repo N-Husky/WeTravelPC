@@ -4,10 +4,17 @@ public class User {
     private String userName;
     private String profilePhotoReference;
     private String dataBaseReference;
-    public User(String userName, String dataBaseReference, String profilePhotoReference){
-        this.userName = userName;
+    private String password;
+    private String userLogin;
+    private String userInfo;
+
+    public String getUserLogin() {
+        return userLogin;
+    }
+    public User(String userLogin, String password, String dataBaseReference){
+        this.userLogin = userLogin;
+        this.password = password;
         this.dataBaseReference = dataBaseReference;
-        this.profilePhotoReference = profilePhotoReference;
     }
     public String getUserName(){
         return userName;
