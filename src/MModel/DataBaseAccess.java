@@ -4,15 +4,13 @@ import com.google.api.gax.paging.Page;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
 import com.google.common.collect.Lists;
+import com.google.firebase.database.core.Path;
 import net.thegreshams.firebase4j.error.FirebaseException;
 import net.thegreshams.firebase4j.error.JacksonUtilityException;
 import net.thegreshams.firebase4j.model.FirebaseResponse;
 import net.thegreshams.firebase4j.service.Firebase;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -152,6 +150,111 @@ public class DataBaseAccess {
         System.out.println(
                 "File " + filePath + " uploaded to bucket " + bucketName + " as " + objectName);
     }
+    public void deleteVideo(String videoName) throws IOException {
+        if(user == null)
+            throw  new NullPointerException("User is not initialized");
+        FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
+        GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
+                .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
+        stream.close();
+        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+        // The ID of your GCP project
+        //String projectId = "wetravel-1591a";
+        // The ID of your GCS bucket
+        String bucketName = "wetravel-1591a.appspot.com";
+        // The ID of your GCS object
+        String objectName = user.getDataBaseReference()+"/"+videoName;
+        // The path to your file to upload
+        storage.delete(bucketName, objectName);
+//        String filePath = pathToVideo;//
+//        BlobId blobId = BlobId.of(bucketName, objectName);
+    }
+    public void uploadUserPhoto(String pathToPhoto) throws IOException {//Пользователь выберает фото// , после чего фото хагружается на сервер, все фото пользователей
+        //имеют одинаковое название - profile_img
+        if(user == null)
+            throw  new NullPointerException("User is not initialized");
+        FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
+        GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
+                .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
+        stream.close();
+        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+        // The ID of your GCP project
+        //String projectId = "wetravel-1591a";
+        // The ID of your GCS bucket
+        String bucketName = "wetravel-1591a.appspot.com";
+        // The ID of your GCS object
+        String objectName = user.getDataBaseReference()+"/"+"profile_img";
+        // The path to your file to upload
+        String filePath = pathToPhoto;
+        BlobId blobId = BlobId.of(bucketName, objectName);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+        storage.create(blobInfo, Files.readAllBytes(Paths.get(filePath)));
+        user.setProfilePhotoReference(objectName);
+        user.setPhotoPath(pathToPhoto);
+        System.out.println(
+                "File " + filePath + " uploaded to bucket " + bucketName + " as " + objectName);
+    }
+    public boolean checkPhotoExistence() throws IOException {//проверяет есть ли фото пользователя на сервере
+        if(user == null)
+            throw  new NullPointerException("User is not initialized");
+        FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
+        GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
+                .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
+        stream.close();
+        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+        String bucketName = "wetravel-1591a.appspot.com";
+        Bucket bucket = storage.get(bucketName);
+        Page<Blob> pblob = bucket.list(Storage.BlobListOption.prefix(user.getDataBaseReference()));
+        for (Blob blob : pblob.iterateAll()) {
+            if(blob.getName().equals(user.getDataBaseReference() + "/profile_img"))
+                return true;
+        }
+        return false;
+    }
+    public void loadPhoto () throws IOException {//загружает фотографию с сервера на клент, что бы не приходилось каждый раз загружать с сервера
+        FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
+        GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
+                .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
+        stream.close();
+        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+        String bucketName = "wetravel-1591a.appspot.com";
+        Bucket bucket = storage.get(bucketName);
+        Blob blob = storage.get(BlobId.of(bucketName,"profile_img"));
+        blob.downloadTo(Paths.get(".//"));
+    }
+    public boolean checkCredentials(){//проверяет есть ли файл с логином паролем у клиента
+        return new File(".//credentials.tmp").exists();
+    }
+    public void createCredentialsTmp(){ //создать файл с логином паролем
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try(FileOutputStream fos=new FileOutputStream(".//credentials.tmp"))
+        {
+            // перевод строки в байты
+            byte[] buffer = user.getUserLogin().getBytes();
+            fos.write(buffer, 0, buffer.length);
+            buffer = "\n".getBytes();
+            fos.write(buffer, 0, buffer.length);
+            buffer = user.getUserLogin().getBytes();
+            fos.write(buffer, 0, buffer.length);
+        }
+        catch(IOException ex){
+            System.out.println(ex.getMessage());
+        }
+    }
+    public String getCredentialsFromFile(){ //возвращает логин и пароль в строке типа: "login/password"
+        String credentials;
+        try(FileInputStream fin=new FileInputStream(".//credentials.tmp"))
+        {
+            byte[] buffer = new byte[fin.available()];
+            fin.read(buffer, 0, buffer.length);
+            credentials = new String(buffer);
+        }
+        catch(IOException ex){
+            System.out.println(ex.getMessage());
+            credentials = "";
+        }
+        return credentials;
+    }
     public ArrayList<VideoMarker> markdersForMap (){
         ArrayList<VideoMarker> markers = new ArrayList<>();
         FileInputStream stream = null;
@@ -192,4 +295,8 @@ public class DataBaseAccess {
     public User getUser() {
         return user;
     }
+    public void saveLoginCredentials(){
+
+    }
+
 }

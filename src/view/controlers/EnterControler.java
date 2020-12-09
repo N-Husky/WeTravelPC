@@ -68,8 +68,8 @@ public class EnterControler {
     }
 
     public void logining_btn() throws IOException, InterruptedException {
-            email.setText("zmejka0@gmail.com");
-            password.setText("qqqqqqqq");
+            //email.setText("zmejka0@gmail.com");
+            //password.setText("qqqqqqqq");
             forLogin();
     }
 
