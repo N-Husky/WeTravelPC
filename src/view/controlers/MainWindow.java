@@ -1,7 +1,6 @@
 package view.controlers;
 
 import MModel.DataBaseAccess;
-import MModel.User;
 import MModel.VideoMarker;
 import com.dlsc.gmapsfx.GoogleMapView;
 import com.dlsc.gmapsfx.MapComponentInitializedListener;
@@ -10,55 +9,92 @@ import com.dlsc.gmapsfx.javascript.event.MouseEventHandler;
 import com.dlsc.gmapsfx.javascript.event.UIEventHandler;
 import com.dlsc.gmapsfx.javascript.event.UIEventType;
 import com.dlsc.gmapsfx.javascript.object.*;
-import com.google.api.gax.paging.Page;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
 import com.google.common.collect.Lists;
-import javafx.event.ActionEvent;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.stage.FileChooser;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.Callback;
+import net.thegreshams.firebase4j.error.FirebaseException;
 import netscape.javascript.JSObject;
 import view.StartPoint;
+import view.listView.Video;
+import view.listView.VideoListCell;
 
 import java.io.*;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class MainWindow extends Window implements MapComponentInitializedListener {
 
     public GoogleMapView mapView;
     public AnchorPane anchorPane;
     public MediaView videoView;
+    public TextField search_field;
+    public Button upload_btn;
+    public Circle image_circle;
+    public Rectangle logout;
+    public Rectangle setings;
+    public AnchorPane my_videos;
+    public ListView listView;
+    public Label poster_name;
+    public Circle poster_photo;
     private GoogleMap map;
-    public static String firebase_baseUrl = "https://wetravel-1591a.firebaseio.com/";
-    public static String firebase_apiKey = "AIzaSyCO06MSKvbYLnPGzBYPKpX8SlcPpiJupA8";
-    private Marker marker;
     private Marker marker_load;
-    private File file;
+    private boolean firstin = true;
     LatLong markerForUpload;
-    @Override
-    public void mapInitialized() {
-        onShow();
+
+    //done
+    public void hideVideo() {
+        anchorPane.setVisible(false);
+    }
+
+    public void onUserPhotoChange() throws IOException, InterruptedException {
+        MyFileChooser fileChooser = new MyFileChooser();
+        final String filePath;
+        filePath = fileChooser.forPhotoChoose(this, "User's photo changing");
+        (new StartPoint()).acceptor(this, "You want to upload new profile image?", new Consumer() {
+            @Override
+            public void accept(Object o) {
+                try {
+                    DataBaseAccess.getInstance().uploadUserPhoto(filePath);
+                    Image img = new Image(DataBaseAccess.getInstance().getPhotoLink(DataBaseAccess.getInstance().getUser().getDataBaseReference()));
+                    image_circle.setFill(new ImagePattern(img));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public void onAdd() {
+        my_videos.setVisible(false);
+        upload_btn.setVisible(true);
         hideVideo();
         final MapOptions mapOptions = new MapOptions();
         mapOptions.center(new LatLong(52.888, 51.556))
-                .overviewMapControl(false).panControl(false).rotateControl(false).scaleControl(false).streetViewControl(false).zoomControl(false).zoom(12).minZoom(3);
-
+                .overviewMapControl(false).panControl(false)
+                .rotateControl(false)
+                .scaleControl(false)
+                .streetViewControl(false)
+                .zoomControl(false)
+                .zoom(5)
+                .minZoom(3);
         map = mapView.createMap(mapOptions);
+
         map.addMouseEventHandler(UIEventType.click, new MouseEventHandler() {
 
             @Override
@@ -73,53 +109,42 @@ public class MainWindow extends Window implements MapComponentInitializedListene
                 markerOptions.position(mouseEvent.getLatLong());
                 marker_load = new Marker(markerOptions);
                 map.addMarker(marker_load);
-
             }
         });
-    }
-
-
-
-    //Put this URL into MediaView
-    public URL getTempStreamReference(BlobInfo blbInfo, Storage storage) {
-        return storage.signUrl(blbInfo, 2, TimeUnit.SECONDS, Storage.SignUrlOption.withV4Signature());
-    }
-
-
-
-
-    //TODO Чому це тут? а не у відеомаркері?
-    //Потому что
-    public String getVideoPlayerLink(VideoMarker vm) throws IOException {//retrieve link for media player from videoMarker
-        FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
-        GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
-                .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
-        stream.close();
-        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
-        String bucketName = "wetravel-1591a.appspot.com";
-
-        Bucket bucket = storage.get(bucketName);
-        Page<Blob> blobs = bucket.list();
-        BlobId blobId = BlobId.of(bucketName, vm.getVideoReference());
-        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-        return storage.signUrl(blobInfo, 1, TimeUnit.MINUTES, Storage.SignUrlOption.withV4Signature()).toString();
-    }
-
-    public void initialize() {
-        mapView.addMapInitializedListener(this);
-    }
-
-    public void hideVideo() {
-        anchorPane.setVisible(false);
     }
 
     public void onClose() {
         Stage stage = (Stage) this.anchorPane.getScene().getWindow();
         stage.close();
     }
+    //not done
+
+    @Override
+    public void mapInitialized() {
+        if (firstin) {
+            onShow();
+            firstin = false;
+        }
+    }
+
+
+    public void initialize() throws IOException {
+        upload_btn.setVisible(false);
+        mapView.addMapInitializedListener(this);
+        Image img;
+        img = new Image(DataBaseAccess.getInstance().getPhotoLink(DataBaseAccess.getInstance().getUser().getDataBaseReference()));
+        image_circle.setFill(new ImagePattern(img));
+        Image logout = new Image("view/css/log-out.png");
+        Image settings = new Image("view/css/settings.png");
+        this.logout.setFill(new ImagePattern(logout));
+        this.setings.setFill(new ImagePattern(settings));
+    }
 
     public void onShow() {
-        marker_load.setVisible(false);
+        my_videos.setVisible(false);
+        upload_btn.setVisible(false);
+        if (marker_load != null)
+            marker_load.setVisible(false);
         markerForUpload = null;
 
         final MapOptions mapOptions = new MapOptions();
@@ -130,7 +155,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
                 .scaleControl(false)
                 .streetViewControl(false)
                 .zoomControl(false)
-                .zoom(12)
+                .zoom(5)
                 .minZoom(3);
 
         map = mapView.createMap(mapOptions);
@@ -138,20 +163,36 @@ public class MainWindow extends Window implements MapComponentInitializedListene
         MarkerOptions markerOptions = new MarkerOptions();
         for (VideoMarker vid : DataBaseAccess.getInstance().markdersForMap()) {
             final VideoMarker vidM = vid;
-            markerOptions.position(new LatLong(vidM.getX(), vidM.getY()));                                                      //введення позиції маркера
+            markerOptions.position(new LatLong(vidM.getX(), vidM.getY()));
             final Marker marker = new Marker(markerOptions);
             marker.setTitle(new LatLong(vidM.getX(), vidM.getY()).toString());
 
             map.addUIEventHandler(marker, UIEventType.click, new UIEventHandler() {
                 @Override
                 public void handle(JSObject jsObject) {
-                    anchorPane.setVisible(true);
+
                     Media media = null;
                     try {
-                        media = new Media(getVideoPlayerLink(vidM));
+                        media = new Media(DataBaseAccess.getInstance().getVideoPlayerLink(vidM));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
+                    Image img = null;
+                    try {
+                        img = new Image(DataBaseAccess.getInstance().getPhotoLink(vid.getVideoReference().split("/")[0]));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        poster_name.setText(DataBaseAccess.getInstance().getUserInfo(vid.getVideoReference()).getUserName());
+                    } catch (FirebaseException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    poster_photo.setFill(new ImagePattern(img));
+
                     final MediaPlayer mediaPlayer = new MediaPlayer(media);
                     mediaPlayer.setAutoPlay(true);
 
@@ -168,10 +209,12 @@ public class MainWindow extends Window implements MapComponentInitializedListene
                             }
                         }
                     });
+
+                    //TODO придумати вивід відео
                     videoView.setMediaPlayer(mediaPlayer);
+                    anchorPane.setVisible(true);
                 }
             });
-
             map.addUIEventHandler(marker, UIEventType.mouseover, new UIEventHandler() {
                 @Override
                 public void handle(JSObject jsObject) {
@@ -189,13 +232,50 @@ public class MainWindow extends Window implements MapComponentInitializedListene
             });
             map.addMarker(marker);
         }
-        marker = null;
     }
 
     public void uploadVideo() throws IOException {
         if (markerForUpload != null)
             (new StartPoint()).startVideoUpload(videoView.getScene().getWindow(), VideoMarker.getStringCoordinates(markerForUpload.getLatitude(), markerForUpload.getLongitude()));
+        marker_load.setVisible(false);
+        marker_load = null;
         markerForUpload = null;
-        marker = null;
+
+    }
+
+    public void onSearch() {
+
+    }
+
+
+    public void onLogOut() {
+        //TODO logout
+    }
+
+    public void onSetings() {
+        //TODO settings
+    }
+
+    public void onMyVideos() {
+        upload_btn.setVisible(false);
+        my_videos.setVisible(true);
+        listView.setCellFactory(new Callback<ListView, ListCell>() {
+            @Override
+            public ListCell call(ListView param) {
+                return VideoListCell.newInstance();
+            }
+        });
+
+        ObservableList<Video> videos = FXCollections.observableArrayList();
+        videos.add(new Video().date("13.12.2020").name("Gopka"));
+
+        videos.add(new Video().date("29.2.2020").name("Hell"));
+        videos.add(new Video().date("1.9.2020").name("Byvoyno"));
+
+        listView.focusModelProperty();
+
+        listView.setItems(videos);
+        //TODO onClickListner
+        //TODO Delete
     }
 }

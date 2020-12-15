@@ -2,6 +2,8 @@ package view.controlers;
 
 import MModel.DataBaseAccess;
 import MModel.User;
+import MModel.exeptions.MailExistException;
+import MModel.exeptions.PasswordIncorectException;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -38,28 +40,41 @@ public class EnterControler {
     public Label eror1;
     public Label eror3;
     private boolean point = true;             // true - register    false - login
-    public String firebase_baseUrl = "https://wetravel-1591a.firebaseio.com/";
-    public String firebase_apiKey = "AIzaSyCO06MSKvbYLnPGzBYPKpX8SlcPpiJupA8";
 
     private Pattern p = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{1,})$");
-    private Stage stage = new Stage();
-
 
     public void enter_btn() throws JacksonUtilityException, IOException, FirebaseException {
+        boolean i = true;
         if (point) {
             if (!checkEverything()) return;
-            if(DataBaseAccess.getInstance().instantiateUser(true ,email.getText().toString(), password.getText().toString()))
-                (new StartPoint()).startMainWindow();
-            System.out.println(DataBaseAccess.getInstance().getUser().getUserLogin());
+            try {
+                if (DataBaseAccess.getInstance().instantiateUser(false, email.getText().toString(), password.getText().toString()))
+                    (new StartPoint()).startMainWindow();
+            } catch (MailExistException | PasswordIncorectException e) {
+                i = false;
+                eror1.setVisible(true);
+                eror1.setText("Email is already registrated");
+            }
+            if(i)
             onClose();
         } else {
             if (!checkEverything()) return;
-            if(DataBaseAccess.getInstance().instantiateUser(false ,email.getText().toString(), password.getText().toString()))
-                (new StartPoint()).startMainWindow();
-            System.out.println(DataBaseAccess.getInstance().getUser().getUserLogin());
+            try {
+                if (DataBaseAccess.getInstance().instantiateUser(true, email.getText(), password.getText()))
+                    (new StartPoint()).startMainWindow();
+            } catch (PasswordIncorectException e) {
+                i = false;
+                eror1.setVisible(true);
+                eror1.setText("Password or mail is incorrect");
+            } catch (MailExistException e) {
+
+            }
+            System.out.println(DataBaseAccess.getInstance().getUser().getUserLogin()); // не трогать!!!!!!!!
+            if(i)
             onClose();
         }
+        //TODO account in
     }
 
     public void onClose() {
@@ -68,9 +83,9 @@ public class EnterControler {
     }
 
     public void logining_btn() throws IOException, InterruptedException {
-            //email.setText("zmejka0@gmail.com");
-            //password.setText("qqqqqqqq");
-            forLogin();
+        //email.setText("zmejka0@gmail.com");
+        //password.setText("qqqqqqqq");
+        forLogin();
     }
 
     public void registration_btn() throws IOException {
@@ -79,7 +94,6 @@ public class EnterControler {
     }
 
     private void forLogin() {
-
         if (!point)
             return;
         eror1.setVisible(false);
@@ -116,14 +130,13 @@ public class EnterControler {
     }
 
 
-
     private boolean checkEverything() {
         boolean check = true;
         Matcher m = p.matcher(email.getText());
 
         if (password.getText().length() < 8) {
             eror2.setVisible(true);
-            eror2.setText("Пароль занадто короткий");
+            eror2.setText("Password is to short");
             check = false;
         }
 
@@ -131,27 +144,28 @@ public class EnterControler {
             if (password.getText().compareTo(repeat_password.getText()) != 0) {
                 eror3.setVisible(true);
                 eror2.setVisible(true);
-                eror3.setText("Паролі різні");
-                eror2.setText("Паролі різні");
+                eror3.setText("Passwords aren't equal");
+                eror2.setText("Passwords aren't equal");
                 check = false;
             }
         }
 
         if (password.getText().isEmpty()) {
             eror2.setVisible(true);
-            eror2.setText("Введіть пароль");
+            eror2.setText("Enter password");
+
             check = false;
         }
 
         if (!m.find()) {
             eror1.setVisible(true);
-            eror1.setText("Неправильно введений email");
+            eror1.setText("Email is wrong");
             check = false;
         }
 
         if (email.getText().isEmpty()) {
             eror1.setVisible(true);
-            eror1.setText("Введіть email");
+            eror1.setText("Enter email");
             check = false;
         }
 

@@ -10,6 +10,13 @@ public class User {
     private String dataBaseReference;
     private String password;
     private String userLogin;
+
+    public String getUserInfo() {
+        return userInfo;
+    }
+    public String getUserName(){
+        return userName;
+    }
     private String userInfo;
 
     private String photoPath;//temp link to photo in order not to download it again
@@ -21,9 +28,13 @@ public class User {
         this.password = password;
         this.dataBaseReference = dataBaseReference;
     }
-    public String getUserName(){
-        return userName;
+    public User(String profilePhotoReference, String userName, String userInfo, String dataBaseReference){
+        this.profilePhotoReference = profilePhotoReference;
+        this.userName = userName;
+        this.userInfo = userInfo;
+        this.dataBaseReference = dataBaseReference;
     }
+
     public String getDataBaseReference(){
         return dataBaseReference;
     }

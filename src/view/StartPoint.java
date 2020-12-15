@@ -1,13 +1,8 @@
 package view;
 
-import MModel.User;
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,22 +10,12 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
-import net.thegreshams.firebase4j.error.FirebaseException;
-import net.thegreshams.firebase4j.error.JacksonUtilityException;
-import net.thegreshams.firebase4j.model.FirebaseResponse;
-import net.thegreshams.firebase4j.service.Firebase;
-import view.controlers.EnterControler;
+import view.controlers.AcceptWindow;
 import view.controlers.MainWindow;
-import view.controlers.TestMedia;
 import view.controlers.VideoUpload;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.function.Consumer;
 
 public class StartPoint extends Application {
 
@@ -45,7 +30,6 @@ public class StartPoint extends Application {
         scene.setFill(Color.TRANSPARENT);
         scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
         primaryStage.setScene(scene);
-
         primaryStage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -53,7 +37,6 @@ public class StartPoint extends Application {
                 yOffset = primaryStage.getY() - event.getScreenY();
             }
         });
-
         primaryStage.getScene().setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -72,7 +55,8 @@ public class StartPoint extends Application {
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/MainWindow.fxml"));
         stage.setScene(new Scene((Parent) loader.load()));
-        stage.setMaximized(true);
+        stage.setResizable(false);
+        stage.setTitle("WeTravel");
         MainWindow controller = loader.getController();
         controller.initialize();
         stage.show();
@@ -81,10 +65,41 @@ public class StartPoint extends Application {
     public void startVideoUpload(Window window, String marker) throws IOException {
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/videoUpload.fxml"));
-        stage.setScene(new Scene((Parent) loader.load()));
-        stage.setMaximized(true);
+        Scene scene = new Scene((Parent) loader.load());
+        scene.setFill(Color.TRANSPARENT);
+        stage.setScene(scene);
+        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.setResizable(false);
         VideoUpload controller = loader.getController();
         controller.initialize(window, marker);
+        stage.show();
+    }
+
+    public void acceptor(Window window, String str, Consumer consumer) throws IOException {
+        Stage stage = new Stage();
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/AcceptWindow.fxml"));
+        Scene scene = new Scene((Parent) loader.load());
+        scene.setFill(Color.TRANSPARENT);
+        stage.setScene(scene);
+        stage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = stage.getX() - event.getScreenX();
+                yOffset = stage.getY() - event.getScreenY();
+            }
+        });
+
+        stage.getScene().setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.setX(event.getScreenX() + xOffset);
+                stage.setY(event.getScreenY() + yOffset);
+            }
+        });
+        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.setResizable(false);
+        AcceptWindow controller = loader.getController();
+        controller.initialize(window, str, consumer);
         stage.show();
     }
 }

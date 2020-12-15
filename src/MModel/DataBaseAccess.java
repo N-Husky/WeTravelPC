@@ -1,28 +1,46 @@
 package MModel;
 
+import MModel.exeptions.MailExistException;
+import MModel.exeptions.PasswordIncorectException;
 import com.google.api.gax.paging.Page;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
 import com.google.common.collect.Lists;
 import com.google.firebase.database.core.Path;
+import javafx.scene.image.Image;
 import net.thegreshams.firebase4j.error.FirebaseException;
 import net.thegreshams.firebase4j.error.JacksonUtilityException;
 import net.thegreshams.firebase4j.model.FirebaseResponse;
 import net.thegreshams.firebase4j.service.Firebase;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class DataBaseAccess {
-    public String firebase_baseUrl = "https://wetravel-1591a.firebaseio.com/";
+    public String firebase_baseUrl = "https://wetravel-1591a.firebaseio.com/"; //
     public String firebase_apiKey = "AIzaSyCO06MSKvbYLnPGzBYPKpX8SlcPpiJupA8";
     private static DataBaseAccess instance;
     private User user;
 
     static {
         instance = new DataBaseAccess();
+    }
+
+    public String getVideoPlayerLink(VideoMarker vm) throws IOException {//retrieve link for media player from videoMarker
+        FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
+        GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
+                .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
+        stream.close();
+        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+        String bucketName = "wetravel-1591a.appspot.com";
+
+        BlobId blobId = BlobId.of(bucketName, vm.getVideoReference());
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+        return storage.signUrl(blobInfo, 1, TimeUnit.MINUTES, Storage.SignUrlOption.withV4Signature()).toString();
     }
 
     private DataBaseAccess() {
@@ -33,23 +51,24 @@ public class DataBaseAccess {
         return instance;
     }
 
-    public boolean instantiateUser(boolean auntification, String login, String password) throws UnsupportedEncodingException, FirebaseException, JacksonUtilityException {
-        if(auntification)
-            return register(login,password);
-        else return logining(login,password);
+    public boolean instantiateUser(boolean auntification, String login, String password) throws FirebaseException, JacksonUtilityException, PasswordIncorectException, UnsupportedEncodingException, MailExistException {
+        if (auntification)
+            return logining(login, password);
+        else return register(login, password);
     }
 
-    private boolean logining(String login, String password) throws FirebaseException, UnsupportedEncodingException {
+    private boolean logining(String login, String password) throws FirebaseException, UnsupportedEncodingException, PasswordIncorectException {
         if (!checkLoginPassword(login, password))
-            return false;//Ne zashol (!zashol)
+            throw new PasswordIncorectException();
         user = new User(login, password, getUserLink(login));
         return true;
         //Zashol
     }
 
-    private boolean register(String login, String password) throws UnsupportedEncodingException, FirebaseException, JacksonUtilityException {
-        if (checkMailExistence(login))//if mail exist
-            return false;
+    private boolean register(String login, String password) throws FirebaseException, JacksonUtilityException, MailExistException, UnsupportedEncodingException {
+        if (checkMailExistence(login)){
+            throw new MailExistException();
+        }
         registration(login, password);
         return true;
     }
@@ -62,9 +81,7 @@ public class DataBaseAccess {
         Set<String> codeKeys = dataMap.keySet();
         for (String states : codeKeys) {
             Map<String, Object> dataMap2 = (Map) dataMap.get(states);
-            System.out.println(dataMap2.toString());
             if (dataMap2.containsValue(login)) {
-                System.out.println("Found successfully");
                 return states;
             }
         }
@@ -73,7 +90,7 @@ public class DataBaseAccess {
 
     private boolean checkLoginPassword(String email, String password) throws FirebaseException, UnsupportedEncodingException { //for logining
         //вместе с проверкой пароля в метод checkEverything
-        System.out.println(email);
+
         Firebase firebase = new Firebase(firebase_baseUrl);
         FirebaseResponse response = firebase.get();
         Map<String, Object> dataMap = response.getBody();
@@ -81,11 +98,8 @@ public class DataBaseAccess {
         Set<String> codeKeys = dataMap.keySet();
         for (String states : codeKeys) {
             Map<String, Object> dataMap2 = (Map) dataMap.get(states);
-            System.out.println(dataMap2.toString());
             if (dataMap2.containsValue(email)) {
-                System.out.println("Found successfully");
                 if (dataMap2.containsValue(password)) {
-                    System.out.println("Password accepted");
                     return true;
                 } else break;
             }
@@ -96,8 +110,7 @@ public class DataBaseAccess {
     }
 
     private boolean checkMailExistence(String email) throws FirebaseException, UnsupportedEncodingException {//for registration
-        //вместе с проверкой пароля в метод checkEverything
-        System.out.println(email);
+
         Firebase firebase = new Firebase(firebase_baseUrl);
         FirebaseResponse response = firebase.get();
         Map<String, Object> dataMap = response.getBody();
@@ -105,9 +118,8 @@ public class DataBaseAccess {
         Set<String> codeKeys = dataMap.keySet();
         for (String states : codeKeys) {
             Map<String, Object> dataMap2 = (Map) dataMap.get(states);
-            System.out.println(dataMap2.toString());
+
             if (dataMap2.containsValue(email)) {//THROWS EXCEPTION!!!
-                System.out.println("The email \"" + email + "\" already registered");
                 return true;
             }
         }
@@ -122,10 +134,11 @@ public class DataBaseAccess {
         dataMap.put("Password", password);
         response = firebase.post("users", dataMap);
     }
+
     public void uploadVideo(String videoName, String pathToVideo, String coordinates) throws Exception {
         // FILE UPLOAD
-        if(user == null)
-            throw  new NullPointerException("User is not initialized");
+        if (user == null)
+            throw new NullPointerException("User is not initialized");
         FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
                 .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
@@ -136,23 +149,23 @@ public class DataBaseAccess {
         // The ID of your GCS bucket
         String bucketName = "wetravel-1591a.appspot.com";
         // The ID of your GCS object
-        String objectName = user.getDataBaseReference()+"/"+videoName;
+        String objectName = user.getDataBaseReference() + "/" + videoName;
         // The path to your file to upload
         String filePath = pathToVideo;//
         BlobId blobId = BlobId.of(bucketName, objectName);
         Map<String, String> newMetaData = new HashMap<>();
+        newMetaData.put("user_id", user.getDataBaseReference());
         newMetaData.put("position", coordinates);
         Calendar cal = new GregorianCalendar();
         newMetaData.put("uploadingTime", cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.YEAR) + " " + cal.get(Calendar.HOUR) + ":" + cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND));
         //System.out.println(cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.YEAR) + " " + cal.get(Calendar.HOUR) + ":" + cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND));
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMetadata(newMetaData).build();
         storage.create(blobInfo, Files.readAllBytes(Paths.get(filePath)));
-        System.out.println(
-                "File " + filePath + " uploaded to bucket " + bucketName + " as " + objectName);
     }
+
     public void deleteVideo(String videoName) throws IOException {
-        if(user == null)
-            throw  new NullPointerException("User is not initialized");
+        if (user == null)
+            throw new NullPointerException("User is not initialized");
         FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
                 .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
@@ -163,16 +176,17 @@ public class DataBaseAccess {
         // The ID of your GCS bucket
         String bucketName = "wetravel-1591a.appspot.com";
         // The ID of your GCS object
-        String objectName = user.getDataBaseReference()+"/"+videoName;
+        String objectName = user.getDataBaseReference() + "/" + videoName;
         // The path to your file to upload
         storage.delete(bucketName, objectName);
 //        String filePath = pathToVideo;//
 //        BlobId blobId = BlobId.of(bucketName, objectName);
     }
+
     public void uploadUserPhoto(String pathToPhoto) throws IOException {//Пользователь выберает фото// , после чего фото хагружается на сервер, все фото пользователей
         //имеют одинаковое название - profile_img
-        if(user == null)
-            throw  new NullPointerException("User is not initialized");
+        if (user == null)
+            throw new NullPointerException("User is not initialized");
         FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
                 .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
@@ -183,7 +197,7 @@ public class DataBaseAccess {
         // The ID of your GCS bucket
         String bucketName = "wetravel-1591a.appspot.com";
         // The ID of your GCS object
-        String objectName = user.getDataBaseReference()+"/"+"profile_img";
+        String objectName = user.getDataBaseReference() + "/" + "profile_img";
         // The path to your file to upload
         String filePath = pathToPhoto;
         BlobId blobId = BlobId.of(bucketName, objectName);
@@ -191,12 +205,11 @@ public class DataBaseAccess {
         storage.create(blobInfo, Files.readAllBytes(Paths.get(filePath)));
         user.setProfilePhotoReference(objectName);
         user.setPhotoPath(pathToPhoto);
-        System.out.println(
-                "File " + filePath + " uploaded to bucket " + bucketName + " as " + objectName);
     }
+
     public boolean checkPhotoExistence() throws IOException {//проверяет есть ли фото пользователя на сервере
-        if(user == null)
-            throw  new NullPointerException("User is not initialized");
+        if (user == null)
+            throw new NullPointerException("User is not initialized");
         FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
                 .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
@@ -206,12 +219,19 @@ public class DataBaseAccess {
         Bucket bucket = storage.get(bucketName);
         Page<Blob> pblob = bucket.list(Storage.BlobListOption.prefix(user.getDataBaseReference()));
         for (Blob blob : pblob.iterateAll()) {
-            if(blob.getName().equals(user.getDataBaseReference() + "/profile_img"))
+            if (blob.getName().equals(user.getDataBaseReference() + "/profile_img"))
                 return true;
         }
         return false;
     }
-    public void loadPhoto () throws IOException {//загружает фотографию с сервера на клент, что бы не приходилось каждый раз загружать с сервера
+
+    public String getPhotoLink(String userReference) throws IOException {
+        if (!checkPhotoExistence())
+        {
+            System.out.println("1");
+            return "view/css/default_profile_img.jpg";
+        }
+
         FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
                 .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
@@ -219,16 +239,32 @@ public class DataBaseAccess {
         Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
         String bucketName = "wetravel-1591a.appspot.com";
         Bucket bucket = storage.get(bucketName);
-        Blob blob = storage.get(BlobId.of(bucketName,"profile_img"));
+        Page<Blob> blobs = bucket.list();
+        BlobId blobId = BlobId.of(bucketName,userReference + "/profile_img");
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+
+        return storage.signUrl(blobInfo, 1, TimeUnit.MINUTES, Storage.SignUrlOption.withV4Signature()).toString();
+    }
+
+    public void loadPhoto() throws IOException {//загружает фотографию с сервера на клент, что бы не приходилось каждый раз загружать с сервера
+        FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
+        GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
+                .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
+        stream.close();
+        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+        String bucketName = "wetravel-1591a.appspot.com";
+        Bucket bucket = storage.get(bucketName);
+        Blob blob = storage.get(BlobId.of(bucketName, "profile_img"));
         blob.downloadTo(Paths.get(".//"));
     }
-    public boolean checkCredentials(){//проверяет есть ли файл с логином паролем у клиента
+
+    public boolean checkCredentials() {//проверяет есть ли файл с логином паролем у клиента
         return new File(".//credentials.tmp").exists();
     }
-    public void createCredentialsTmp(){ //создать файл с логином паролем
+
+    public void createCredentialsTmp() { //создать файл с логином паролем
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try(FileOutputStream fos=new FileOutputStream(".//credentials.tmp"))
-        {
+        try (FileOutputStream fos = new FileOutputStream(".//credentials.tmp")) {
             // перевод строки в байты
             byte[] buffer = user.getUserLogin().getBytes();
             fos.write(buffer, 0, buffer.length);
@@ -236,26 +272,25 @@ public class DataBaseAccess {
             fos.write(buffer, 0, buffer.length);
             buffer = user.getUserLogin().getBytes();
             fos.write(buffer, 0, buffer.length);
-        }
-        catch(IOException ex){
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
     }
-    public String getCredentialsFromFile(){ //возвращает логин и пароль в строке типа: "login/password"
+
+    public String getCredentialsFromFile() { //возвращает логин и пароль в строке типа: "login/password"
         String credentials;
-        try(FileInputStream fin=new FileInputStream(".//credentials.tmp"))
-        {
+        try (FileInputStream fin = new FileInputStream(".//credentials.tmp")) {
             byte[] buffer = new byte[fin.available()];
             fin.read(buffer, 0, buffer.length);
             credentials = new String(buffer);
-        }
-        catch(IOException ex){
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
             credentials = "";
         }
         return credentials;
     }
-    public ArrayList<VideoMarker> markdersForMap (){
+
+    public ArrayList<VideoMarker> markdersForMap() {
         ArrayList<VideoMarker> markers = new ArrayList<>();
         FileInputStream stream = null;
         try {
@@ -292,11 +327,17 @@ public class DataBaseAccess {
         }
         return markers;
     }
+
     public User getUser() {
         return user;
     }
-    public void saveLoginCredentials(){
 
+    public User getUserInfo (String userReference) throws FirebaseException, IOException {
+        Firebase firebase = new Firebase("https://wetravel-1591a.firebaseio.com/");
+        FirebaseResponse response = firebase.get();
+        Map<String, Object> dataMap = response.getBody();
+        dataMap = (Map) dataMap.get("user_data");
+        Map<String, Object> dataMap2 = (Map) dataMap.get(userReference);
+        return new User(userReference+"/profile_img", dataMap2.get("user_name").toString(), dataMap2.get("user_info").toString(), userReference);
     }
-
 }
