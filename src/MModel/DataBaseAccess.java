@@ -135,6 +135,48 @@ public class DataBaseAccess {
         response = firebase.post("users", dataMap);
     }
 
+    private void changePassword(String new_password, String old_password) throws FirebaseException, UnsupportedEncodingException, PasswordIncorectException, JacksonUtilityException {
+        Firebase firebase = new Firebase(firebase_baseUrl);
+        FirebaseResponse response = firebase.get();
+        Map<String, Object> dataMap = response.getBody();
+        dataMap = (Map) dataMap.get("users");
+        Set<String> codeKeys = dataMap.keySet();
+        Map<String, Object> dataMap2 = null;
+        String key = null;
+        for (String states : codeKeys) {
+            dataMap2 = (Map) dataMap.get(states);
+            if (dataMap2.containsValue(user.getUserLogin())) {
+                if (!dataMap2.containsValue(old_password))
+                    throw new PasswordIncorectException();
+                key = states;
+                break;
+            }
+        }
+        dataMap2.put("Password", new_password);
+        response = firebase.put("users/" + key, dataMap2);
+        user.setPassword(new_password);
+    }
+
+    private void changeUserInfo(String new_info) throws FirebaseException, UnsupportedEncodingException, JacksonUtilityException {
+        Firebase firebase = new Firebase(firebase_baseUrl);
+        FirebaseResponse response = firebase.get();
+        Map<String, Object> dataMap = response.getBody();
+        dataMap = (Map) dataMap.get("user_data");
+        Set<String> codeKeys = dataMap.keySet();
+        Map<String, Object> dataMap2 = null;
+        String key = null;
+        for (String states : codeKeys) {
+            dataMap2 = (Map) dataMap.get(states);
+            if (dataMap2.containsValue(user.getUserName())) {
+                key = states;
+                break;
+            }
+        }
+        dataMap2.put("user_info", new_info);
+        response = firebase.put("user_data/" + key, dataMap2);
+        user.setUserInfo(new_info);
+    }
+
     public void uploadVideo(String videoName, String pathToVideo, String coordinates) throws Exception {
         // FILE UPLOAD
         if (user == null)

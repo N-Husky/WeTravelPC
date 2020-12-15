@@ -44,6 +44,12 @@ public class User {
     public void setProfilePhotoReference(String profilePhotoReference) {
         this.profilePhotoReference = profilePhotoReference;
     }
+    public void setPassword(String new_password) {
+        this.password = new_password;
+    }
+    public void setUserInfo(String new_userInfo) {
+        this.userInfo = new_userInfo;
+    }
     public void setPhotoPath(String photoPath) {
         this.photoPath = photoPath;
     }
