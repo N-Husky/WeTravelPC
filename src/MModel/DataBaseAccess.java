@@ -12,6 +12,10 @@ import net.thegreshams.firebase4j.error.FirebaseException;
 import net.thegreshams.firebase4j.error.JacksonUtilityException;
 import net.thegreshams.firebase4j.model.FirebaseResponse;
 import net.thegreshams.firebase4j.service.Firebase;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.awt.*;
 import java.io.*;
@@ -388,5 +392,18 @@ public class DataBaseAccess {
         dataMap = (Map) dataMap.get("user_data");
         Map<String, Object> dataMap2 = (Map) dataMap.get(userReference);
         return new User(userReference+"/profile_img", dataMap2.get("user_name").toString(), dataMap2.get("user_info").toString(), userReference);
+    }
+    public String getCountryCoordinates(String countryName) throws IOException, ParseException {
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(new FileReader("./src/resources/countries.json"));
+        JSONArray jsonArr = (JSONArray) obj;
+        for (int i=0;i<jsonArr.size();i++){
+            if(((JSONObject)jsonArr.get(i)).get("name").equals(countryName)){
+                String latlng = ((JSONObject)jsonArr.get(i)).get("latlng").toString();
+                latlng = latlng.substring(1,latlng.length()-1);
+                return new StringBuilder(latlng.split(",")[0] + "/" + latlng.split(",")[1]).toString();
+            }
+        }
+        return null;
     }
 }
