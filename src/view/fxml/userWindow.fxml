@@ -2,24 +2,46 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="131.0" prefWidth="538.0" style="-fx-background-color: #434DC1; -fx-background-radius: 20;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controlers.AcceptWindow">
+<AnchorPane prefHeight="619.0" prefWidth="533.0" style="-fx-background-color: #434DC1; -fx-background-radius: 20;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controlers.UserWindow">
    <children>
-      <Label fx:id="string" alignment="CENTER" contentDisplay="CENTER" layoutY="24.0" prefHeight="29.0" prefWidth="539.0" text=":(((" textAlignment="CENTER" textFill="WHITE">
+      <Button layoutX="499.0" layoutY="15.0" mnemonicParsing="false" onAction="#onClose" prefHeight="27.0" prefWidth="24.0" style="-fx-background-insets: 0 0 0 0; -fx-background-color: #9bbaff; -fx-background-radius: 666;" text="x" textAlignment="CENTER">
          <font>
-            <Font name="MS Outlook" size="25.0" />
+            <Font name="MS Outlook" size="14.0" />
+         </font>
+      </Button>
+      <Circle fx:id="profile_img" fill="DODGERBLUE" layoutX="269.0" layoutY="174.0" radius="146.0" stroke="BLACK" strokeType="INSIDE" />
+      <Label fx:id="user_info" alignment="CENTER" contentDisplay="CENTER" layoutX="2.0" layoutY="340.0" prefHeight="36.0" prefWidth="538.0" text="User bleaty" textFill="WHITE">
+         <font>
+            <Font size="25.0" />
          </font>
       </Label>
-      <Button layoutX="33.0" layoutY="74.0" mnemonicParsing="false" onAction="#onOk" prefHeight="34.0" prefWidth="62.0" style="-fx-background-insets: 0 0 0 0; -fx-background-color: #9bbaff;" text="Yes">
+      <Label fx:id="label1" alignment="CENTER" contentDisplay="CENTER" layoutY="386.0" lineSpacing="555.0" prefHeight="18.0" prefWidth="540.0" textAlignment="CENTER" textFill="WHITE">
          <font>
-            <Font name="MS Outlook" size="18.0" />
+            <Font size="25.0" />
          </font>
-      </Button>
-      <Button layoutX="444.0" layoutY="74.0" mnemonicParsing="false" onAction="#onNot" prefHeight="34.0" prefWidth="62.0" style="-fx-background-insets: 0 0 0 0; -fx-background-color: #9bbaff;" text="No">
+      </Label>
+      <Label fx:id="label2" alignment="CENTER" contentDisplay="CENTER" layoutY="422.0" lineSpacing="555.0" prefHeight="18.0" prefWidth="540.0" textAlignment="CENTER" textFill="WHITE">
          <font>
-            <Font name="MS Outlook" size="18.0" />
+            <Font size="25.0" />
          </font>
-      </Button>
+      </Label>
+      <Label fx:id="label3" alignment="CENTER" contentDisplay="CENTER" layoutY="458.0" lineSpacing="555.0" prefHeight="36.0" prefWidth="540.0" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Label>
+      <Label fx:id="label4" alignment="CENTER" contentDisplay="CENTER" layoutX="-1.0" layoutY="494.0" lineSpacing="555.0" prefHeight="36.0" prefWidth="541.0" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Label>
+      <Label fx:id="label5" alignment="CENTER" contentDisplay="CENTER" layoutY="530.0" lineSpacing="555.0" prefHeight="36.0" prefWidth="540.0" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

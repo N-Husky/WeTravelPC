@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="131.0" prefWidth="538.0" style="-fx-background-color: #434DC1; -fx-background-radius: 20;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controlers.AcceptWindow">
+<AnchorPane prefHeight="131.0" prefWidth="538.0" style="-fx-background-color: linear-gradient(to right bottom, #486ff9, #4b61e0, #4b54c7, #4847af, #433b98); -fx-background-radius: 20;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controlers.AcceptWindow">
    <children>
       <Label fx:id="string" alignment="CENTER" contentDisplay="CENTER" layoutY="24.0" prefHeight="29.0" prefWidth="539.0" text=":(((" textAlignment="CENTER" textFill="WHITE">
          <font>

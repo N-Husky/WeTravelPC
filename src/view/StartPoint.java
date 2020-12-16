@@ -1,5 +1,7 @@
 package view;
 
+import MModel.DataBaseAccess;
+import MModel.VideoMarker;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -10,9 +12,8 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
-import view.controlers.AcceptWindow;
-import view.controlers.MainWindow;
-import view.controlers.VideoUpload;
+import net.thegreshams.firebase4j.error.FirebaseException;
+import view.controlers.*;
 
 import java.io.IOException;
 import java.util.function.Consumer;
@@ -24,27 +25,47 @@ public class StartPoint extends Application {
 
     @Override
     public void start(final Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("fxml/registration.fxml"));
-        primaryStage.initStyle(StageStyle.TRANSPARENT);
-        Scene scene = new Scene(root);
+        Stage stage = new Stage();
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/registration.fxml"));
+        Scene scene = new Scene((Parent) loader.load());
         scene.setFill(Color.TRANSPARENT);
         scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
-        primaryStage.setScene(scene);
-        primaryStage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {
+        stage.setScene(scene);
+        stage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                xOffset = primaryStage.getX() - event.getScreenX();
-                yOffset = primaryStage.getY() - event.getScreenY();
+                xOffset = stage.getX() - event.getScreenX();
+                yOffset = stage.getY() - event.getScreenY();
             }
         });
-        primaryStage.getScene().setOnMouseDragged(new EventHandler<MouseEvent>() {
+
+        stage.getScene().setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                primaryStage.setX(event.getScreenX() + xOffset);
-                primaryStage.setY(event.getScreenY() + yOffset);
+                stage.setX(event.getScreenX() + xOffset);
+                stage.setY(event.getScreenY() + yOffset);
             }
         });
-        primaryStage.show();
+        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.setResizable(false);
+        EnterControler controller = loader.getController();
+        controller.initialize();
+        stage.show();
+//        Parent root = FXMLLoader.load(getClass().getResource("fxml/registration.fxml"));
+//        primaryStage.initStyle(StageStyle.TRANSPARENT);
+//        Scene scene = new Scene(root);
+//        scene.setFill(Color.TRANSPARENT);
+//
+//        primaryStage.setScene(scene);
+//        primaryStage.getScene().setOnMousePressed(event -> {
+//            xOffset = primaryStage.getX() - event.getScreenX();
+//            yOffset = primaryStage.getY() - event.getScreenY();
+//        });
+//        primaryStage.getScene().setOnMouseDragged(event -> {
+//            primaryStage.setX(event.getScreenX() + xOffset);
+//            primaryStage.setY(event.getScreenY() + yOffset);
+//        });
+//        primaryStage.show();
     }
 
     public static void main(String[] args) {
@@ -100,6 +121,34 @@ public class StartPoint extends Application {
         stage.setResizable(false);
         AcceptWindow controller = loader.getController();
         controller.initialize(window, str, consumer);
+        stage.show();
+    }
+
+    public void loaderInfo(VideoMarker videoMarker) throws IOException, FirebaseException {
+        Stage stage = new Stage();
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/userWindow.fxml"));
+        Scene scene = new Scene((Parent) loader.load());
+        scene.setFill(Color.TRANSPARENT);
+        stage.setScene(scene);
+        stage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = stage.getX() - event.getScreenX();
+                yOffset = stage.getY() - event.getScreenY();
+            }
+        });
+
+        stage.getScene().setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.setX(event.getScreenX() + xOffset);
+                stage.setY(event.getScreenY() + yOffset);
+            }
+        });
+        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.setResizable(false);
+        UserWindow controller = loader.getController();
+        controller.initialize(videoMarker);
         stage.show();
     }
 }

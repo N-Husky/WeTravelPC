@@ -59,10 +59,11 @@ public class MainWindow extends Window implements MapComponentInitializedListene
 
     //done
     public void hideVideo() {
+        System.out.println("++++++");
         anchorPane.setVisible(false);
     }
 
-    public void onUserPhotoChange() throws IOException, InterruptedException {
+    public void onUserPhotoChange() throws IOException {
         MyFileChooser fileChooser = new MyFileChooser();
         final String filePath;
         filePath = fileChooser.forPhotoChoose(this, "User's photo changing");
@@ -167,53 +168,53 @@ public class MainWindow extends Window implements MapComponentInitializedListene
             final Marker marker = new Marker(markerOptions);
             marker.setTitle(new LatLong(vidM.getX(), vidM.getY()).toString());
 
-            map.addUIEventHandler(marker, UIEventType.click, new UIEventHandler() {
-                @Override
-                public void handle(JSObject jsObject) {
-
-                    Media media = null;
-                    try {
-                        media = new Media(DataBaseAccess.getInstance().getVideoPlayerLink(vidM));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    Image img = null;
-                    try {
-                        img = new Image(DataBaseAccess.getInstance().getPhotoLink(vid.getVideoReference().split("/")[0]));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        poster_name.setText(DataBaseAccess.getInstance().getUserInfo(vid.getVideoReference()).getUserName());
-                    } catch (FirebaseException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    poster_photo.setFill(new ImagePattern(img));
-
-                    final MediaPlayer mediaPlayer = new MediaPlayer(media);
-                    mediaPlayer.setAutoPlay(true);
-
-                    videoView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
-                                mediaPlayer.pause();
-                                return;
-                            } else if (mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
-                                mediaPlayer.play();
-                            } else {
-                                //TODO  Після закінчення відео, повтор
-                            }
-                        }
-                    });
-
-                    //TODO придумати вивід відео
-                    videoView.setMediaPlayer(mediaPlayer);
-                    anchorPane.setVisible(true);
+            map.addUIEventHandler(marker, UIEventType.click, jsObject -> {
+                Media media = null;
+                try {
+                    media = new Media(DataBaseAccess.getInstance().getVideoPlayerLink(vidM));
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+                Image img = null;
+                try {
+                    img = new Image(DataBaseAccess.getInstance().getPhotoLink(vid.getVideoReference().split("/")[0]));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    poster_name.setText(DataBaseAccess.getInstance().getUserInfo(vid.getVideoReference().split("/")[0]).getUserName());
+                } catch (FirebaseException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                poster_photo.setFill(new ImagePattern(img));
+                poster_name.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        try {
+                            (new StartPoint()).loaderInfo(vidM);
+                        } catch (IOException | FirebaseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                final MediaPlayer mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.setAutoPlay(true);
+                videoView.setOnMouseClicked(event -> {
+                    if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+                        mediaPlayer.pause();
+                        return;
+                    } else if (mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
+                        mediaPlayer.play();
+                    } else {
+                        //TODO  Після закінчення відео, повтор
+                    }
+                });
+
+                //TODO придумати вивід відео
+                videoView.setMediaPlayer(mediaPlayer);
+                anchorPane.setVisible(true);
             });
             map.addUIEventHandler(marker, UIEventType.mouseover, new UIEventHandler() {
                 @Override

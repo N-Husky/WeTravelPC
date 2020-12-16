@@ -20,6 +20,11 @@ public class User {
     private String userInfo;
 
     private String photoPath;//temp link to photo in order not to download it again
+
+    public String getPassword() {
+        return password;
+    }
+
     public String getUserLogin() {
         return userLogin;
     }

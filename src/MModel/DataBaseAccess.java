@@ -130,9 +130,13 @@ public class DataBaseAccess {
         Firebase firebase = new Firebase(firebase_baseUrl);
         FirebaseResponse response = firebase.get();
         Map<String, Object> dataMap = new LinkedHashMap<String, Object>();
-        dataMap.put("Email", login);
-        dataMap.put("Password", password);
+        dataMap.put("email", login);
+        dataMap.put("password", password);
         response = firebase.post("users", dataMap);
+        dataMap = new LinkedHashMap<String, Object>();
+        dataMap.put("user_info", "Hello world!");
+        dataMap.put("user_name", login.split("@")[0]);
+        response = firebase.post("user_data", dataMap);
     }
 
     private void changePassword(String new_password, String old_password) throws FirebaseException, UnsupportedEncodingException, PasswordIncorectException, JacksonUtilityException {
@@ -305,18 +309,21 @@ public class DataBaseAccess {
     }
 
     public void createCredentialsTmp() { //создать файл с логином паролем
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (FileOutputStream fos = new FileOutputStream(".//credentials.tmp")) {
             // перевод строки в байты
             byte[] buffer = user.getUserLogin().getBytes();
             fos.write(buffer, 0, buffer.length);
-            buffer = "\n".getBytes();
+            buffer = "/".getBytes();
             fos.write(buffer, 0, buffer.length);
-            buffer = user.getUserLogin().getBytes();
+            buffer = user.getPassword().getBytes();
             fos.write(buffer, 0, buffer.length);
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
+    }
+
+    public void deleteCredentials(){
+        new File(".//credentials.tmp").delete();
     }
 
     public String getCredentialsFromFile() { //возвращает логин и пароль в строке типа: "login/password"

@@ -4,6 +4,7 @@ import MModel.DataBaseAccess;
 import MModel.User;
 import MModel.exeptions.MailExistException;
 import MModel.exeptions.PasswordIncorectException;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -39,12 +40,24 @@ public class EnterControler {
     public Label eror2;
     public Label eror1;
     public Label eror3;
+    public CheckBox toBeSignedIn;
     private boolean point = true;             // true - register    false - login
 
     private Pattern p = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{1,})$");
 
+    public void initialize(){
+        if(DataBaseAccess.getInstance().checkCredentials()){
+
+            forLogin();
+            email.setText(DataBaseAccess.getInstance().getCredentialsFromFile().split("/")[0]);
+            password.setText(DataBaseAccess.getInstance().getCredentialsFromFile().split("/")[1]);
+            toBeSignedIn.setSelected(true);
+        }
+    }
+
     public void enter_btn() throws JacksonUtilityException, IOException, FirebaseException {
+
         boolean i = true;
         if (point) {
             if (!checkEverything()) return;
@@ -56,8 +69,14 @@ public class EnterControler {
                 eror1.setVisible(true);
                 eror1.setText("Email is already registrated");
             }
-            if(i)
-            onClose();
+            if (i) {
+                if(toBeSignedIn.isSelected()){
+                    DataBaseAccess.getInstance().createCredentialsTmp();
+                } else {
+                    DataBaseAccess.getInstance().deleteCredentials();
+                }
+                onClose();
+            }
         } else {
             if (!checkEverything()) return;
             try {
@@ -71,10 +90,16 @@ public class EnterControler {
 
             }
             System.out.println(DataBaseAccess.getInstance().getUser().getUserLogin()); // не трогать!!!!!!!!
-            if(i)
-            onClose();
+            if (i){
+                if(toBeSignedIn.isSelected()){
+                    DataBaseAccess.getInstance().createCredentialsTmp();
+                } else {
+                    DataBaseAccess.getInstance().deleteCredentials();
+                }
+                onClose();
+            }
         }
-        //TODO account in
+
     }
 
     public void onClose() {
@@ -96,9 +121,7 @@ public class EnterControler {
     private void forLogin() {
         if (!point)
             return;
-        eror1.setVisible(false);
-        eror2.setVisible(false);
-        eror3.setVisible(false);
+        hideErrors();
         password.setText("");
         email.setText("");
         repeat_password.setText("");
@@ -111,14 +134,18 @@ public class EnterControler {
         label.setText("Sing-up");
     }
 
+    private void hideErrors() {
+        eror1.setVisible(false);
+        eror2.setVisible(false);
+        eror3.setVisible(false);
+    }
+
     private void forRegister() {
         if (point)
             return;
         eror2.setTranslateY(0);
         eror1.setTranslateY(0);
-        eror1.setVisible(false);
-        eror2.setVisible(false);
-        eror3.setVisible(false);
+        hideErrors();
         password.setText("");
         email.setText("");
         repeat_password.setText("");
