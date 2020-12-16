@@ -51,21 +51,6 @@ public class StartPoint extends Application {
         EnterControler controller = loader.getController();
         controller.initialize();
         stage.show();
-//        Parent root = FXMLLoader.load(getClass().getResource("fxml/registration.fxml"));
-//        primaryStage.initStyle(StageStyle.TRANSPARENT);
-//        Scene scene = new Scene(root);
-//        scene.setFill(Color.TRANSPARENT);
-//
-//        primaryStage.setScene(scene);
-//        primaryStage.getScene().setOnMousePressed(event -> {
-//            xOffset = primaryStage.getX() - event.getScreenX();
-//            yOffset = primaryStage.getY() - event.getScreenY();
-//        });
-//        primaryStage.getScene().setOnMouseDragged(event -> {
-//            primaryStage.setX(event.getScreenX() + xOffset);
-//            primaryStage.setY(event.getScreenY() + yOffset);
-//        });
-//        primaryStage.show();
     }
 
     public static void main(String[] args) {
@@ -75,9 +60,11 @@ public class StartPoint extends Application {
     public void startMainWindow() throws IOException {
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/MainWindow.fxml"));
-        stage.setScene(new Scene((Parent) loader.load()));
+        Scene scene = new Scene((Parent) loader.load());
+        scene.setFill(Color.TRANSPARENT);
+        stage.setScene(scene);
+        stage.initStyle(StageStyle.TRANSPARENT);
         stage.setResizable(false);
-        stage.setTitle("WeTravel");
         MainWindow controller = loader.getController();
         controller.initialize();
         stage.show();
@@ -89,6 +76,21 @@ public class StartPoint extends Application {
         Scene scene = new Scene((Parent) loader.load());
         scene.setFill(Color.TRANSPARENT);
         stage.setScene(scene);
+        stage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = stage.getX() - event.getScreenX();
+                yOffset = stage.getY() - event.getScreenY();
+            }
+        });
+
+        stage.getScene().setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.setX(event.getScreenX() + xOffset);
+                stage.setY(event.getScreenY() + yOffset);
+            }
+        });
         stage.initStyle(StageStyle.TRANSPARENT);
         stage.setResizable(false);
         VideoUpload controller = loader.getController();

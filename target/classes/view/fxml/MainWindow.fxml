@@ -93,8 +93,8 @@
                               </Button>
                               <Circle fx:id="image_circle" centerX="108.0" centerY="120.0" layoutX="60.0" layoutY="-6.0" onMouseClicked="#onUserPhotoChange" pickOnBounds="true" radius="20.0" scaleX="5.0" scaleY="5.0" scaleZ="5.0">
                         </Circle>
-                              <Rectangle fx:id="logout" height="40.0" layoutX="14.0" layoutY="719.0" onMouseClicked="#onLogOut" style="-fx-background-color: black;" width="40.0" AnchorPane.bottomAnchor="17.0" />
-                              <Rectangle fx:id="setings" height="40.0" layoutX="60.0" layoutY="719.0" onMouseClicked="#onSetings" style="-fx-background-color: black;" width="40.0" AnchorPane.bottomAnchor="17.0" />
+                              <Rectangle fx:id="logout" height="35.0" layoutX="14.0" layoutY="719.0" onMouseClicked="#onLogOut" style="-fx-background-color: black;" width="35.0" AnchorPane.bottomAnchor="17.0" />
+                              <Rectangle fx:id="setings" height="35.0" layoutX="60.0" layoutY="719.0" onMouseClicked="#onSetings" style="-fx-background-color: black;" width="35.0" AnchorPane.bottomAnchor="17.0" />
                           </children>
                       </AnchorPane>
 
@@ -102,7 +102,16 @@
                 </GoogleMapView>
             </center>
             <top>
-
+<AnchorPane fx:id="top" prefHeight="27.0" prefWidth="1320.0" style="-fx-background-color: #4b54c7;">
+               <children>
+                  <Circle fill="#ffd900" layoutX="1270.0" layoutY="14.0" onMouseClicked="#onHide" radius="10.0" stroke="#ffd900" strokeType="INSIDE" />
+                  <Label layoutX="22.0" layoutY="4.0" prefHeight="20.0" prefWidth="78.0" text="WeTravel" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Circle fill="#d60000eb" layoutX="1299.0" layoutY="14.0" onMouseClicked="#onClose" radius="10.0" stroke="#d60000ea" strokeType="INSIDE" />
+               </children></AnchorPane>
             </top>
         </BorderPane>
     </children>

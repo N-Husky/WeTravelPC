@@ -5,7 +5,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="619.0" prefWidth="533.0" style="-fx-background-color: #434DC1; -fx-background-radius: 20;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controlers.UserWindow">
+<AnchorPane prefHeight="619.0" prefWidth="533.0" style="-fx-background-color: linear-gradient(to right top, #241044, #36246c, #433b98, #4b54c7, #486ff9); -fx-background-radius: 20;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controlers.UserWindow">
    <children>
       <Button layoutX="499.0" layoutY="15.0" mnemonicParsing="false" onAction="#onClose" prefHeight="27.0" prefWidth="24.0" style="-fx-background-insets: 0 0 0 0; -fx-background-color: #9bbaff; -fx-background-radius: 666;" text="x" textAlignment="CENTER">
          <font>

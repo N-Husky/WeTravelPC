@@ -14,6 +14,7 @@ public class AcceptWindow extends Window {
 
     public void onOk() {
         consumer.accept(string);
+        onNot();
     }
 
     public void onNot() {

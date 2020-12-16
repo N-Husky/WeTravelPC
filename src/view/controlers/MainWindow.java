@@ -56,6 +56,8 @@ public class MainWindow extends Window implements MapComponentInitializedListene
     private Marker marker_load;
     private boolean firstin = true;
     LatLong markerForUpload;
+    private double xOffset;
+    private double yOffset;
 
     //done
     public void hideVideo() {
@@ -126,6 +128,24 @@ public class MainWindow extends Window implements MapComponentInitializedListene
             onShow();
             firstin = false;
         }
+
+        Stage stage = (Stage) this.anchorPane.getScene().getWindow();
+        stage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = stage.getX() - event.getScreenX();
+                yOffset = stage.getY() - event.getScreenY();
+            }
+        });
+
+        stage.getScene().setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.setX(event.getScreenX() + xOffset);
+                stage.setY(event.getScreenY() + yOffset);
+            }
+        });
     }
 
 
@@ -139,6 +159,8 @@ public class MainWindow extends Window implements MapComponentInitializedListene
         Image settings = new Image("view/css/settings.png");
         this.logout.setFill(new ImagePattern(logout));
         this.setings.setFill(new ImagePattern(settings));
+
+
     }
 
     public void onShow() {
@@ -248,9 +270,15 @@ public class MainWindow extends Window implements MapComponentInitializedListene
 
     }
 
+    public void onLogOut() throws IOException {
+        (new StartPoint()).acceptor(this, "Do you want to log-out?", new Consumer() {
+            @Override
+            public void accept(Object o) {
+                    DataBaseAccess.getInstance().deleteCredentials();
+                    onClose();
+            }
+        });
 
-    public void onLogOut() {
-        //TODO logout
     }
 
     public void onSetings() {
@@ -278,5 +306,10 @@ public class MainWindow extends Window implements MapComponentInitializedListene
         listView.setItems(videos);
         //TODO onClickListner
         //TODO Delete
+    }
+
+    public void onHide() {
+        Stage stage = (Stage) this.anchorPane.getScene().getWindow();
+        stage.setIconified(true);
     }
 }
