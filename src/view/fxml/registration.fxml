@@ -4,6 +4,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
 <AnchorPane fx:id="back1" prefHeight="477.0" prefWidth="634.0" style="-fx-background-color: transparent;" styleClass="transparent" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controlers.EnterControler">
    <children>
       <AnchorPane fx:id="pane2" layoutX="203.0" layoutY="45.0" prefHeight="410.0" prefWidth="428.0" style="-fx-background-color: #9bbaff; -fx-background-radius: 25;">
@@ -25,22 +27,22 @@
                <font>
                   <Font size="14.0" />
                </font></PasswordField>
-            <Button layoutX="213.0" layoutY="303.0" mnemonicParsing="false" onAction="#enter_btn" prefHeight="16.0" prefWidth="140.0" style="-fx-background-radius: 24; -fx-background-color: #4b54c7;" text="Let's travel!" textFill="WHITE">
+            <JFXButton layoutX="213.0" layoutY="303.0" mnemonicParsing="false" onAction="#enter_btn" prefHeight="16.0" prefWidth="140.0" style="-fx-background-radius: 24; -fx-background-color: #4b54c7;" text="Let's travel!" textFill="WHITE">
                <font>
                   <Font size="17.0" />
                </font>
-            </Button>
-            <Button graphicTextGap="0.0" layoutX="388.0" layoutY="14.0" mnemonicParsing="false" onAction="#onClose" prefHeight="25.0" prefWidth="28.0" style="-fx-background-radius: 100; -fx-background-color: #486ff9;" text="X" textAlignment="CENTER" textFill="WHITE" />
-            <Button layoutX="151.0" layoutY="357.0" mnemonicParsing="false" onAction="#logining_btn" prefHeight="39.0" prefWidth="110.0" style="-fx-background-radius: 24; -fx-background-color: #4b54c7;" text="Logining" textFill="WHITE">
+            </JFXButton>
+            <JFXButton graphicTextGap="0.0" layoutX="388.0" layoutY="14.0" mnemonicParsing="false" onAction="#onClose" prefHeight="25.0" prefWidth="28.0" style="-fx-background-radius: 100; -fx-background-color: #486ff9;" text="X" textAlignment="CENTER" textFill="WHITE" />
+            <JFXButton layoutX="151.0" layoutY="357.0" mnemonicParsing="false" onAction="#logining_btn" prefHeight="39.0" prefWidth="110.0" style="-fx-background-radius: 24; -fx-background-color: #4b54c7;" text="Logining" textFill="WHITE">
                <font>
                   <Font size="18.0" />
                </font>
-            </Button>
-            <Button layoutX="276.0" layoutY="357.0" mnemonicParsing="false" onAction="#registration_btn" prefHeight="37.0" prefWidth="140.0" style="-fx-background-radius: 24; -fx-background-color: #4b54c7;" text="Register" textFill="WHITE">
+            </JFXButton>
+            <JFXButton layoutX="276.0" layoutY="357.0" mnemonicParsing="false" onAction="#registration_btn" prefHeight="37.0" prefWidth="140.0" style="-fx-background-radius: 24; -fx-background-color: #4b54c7;" text="Register" textFill="WHITE">
                <font>
                   <Font size="18.0" />
                </font>
-            </Button>
+            </JFXButton>
             <Label fx:id="eror3" layoutX="163.0" layoutY="243.0" prefHeight="18.0" prefWidth="250.0" style="visibility: gone;" text="Label" textAlignment="CENTER" textFill="#ff2929">
                <font>
                   <Font name="Webdings" size="12.0" />
@@ -56,11 +58,11 @@
                   <Font name="Webdings" size="12.0" />
                </font>
             </Label>
-            <CheckBox fx:id="toBeSignedIn" layoutX="163.0" layoutY="270.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="180.0" style="-fx-background-insets: 0 0 0 0 , 0 0 0 0; -fx-background-radius: 0;" text="Keep me signed in">
+            <JFXCheckBox fx:id="toBeSignedIn" layoutX="163.0" layoutY="270.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="180.0" style="-fx-background-insets: 0 0 0 0 , 0 0 0 0; -fx-background-radius: 0; -jfx-checked-color: #007cff;" text="Keep me signed in">
                <font>
                   <Font name="MS Outlook" size="13.0" />
                </font>
-            </CheckBox>
+            </JFXCheckBox>
          </children>
       </AnchorPane>
 

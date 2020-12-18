@@ -153,4 +153,92 @@ public class StartPoint extends Application {
         controller.initialize(videoMarker);
         stage.show();
     }
+
+    public void settings() throws IOException, FirebaseException {
+        Stage stage = new Stage();
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/accountSettings.fxml"));
+        Scene scene = new Scene((Parent) loader.load());
+        scene.setFill(Color.TRANSPARENT);
+        stage.setScene(scene);
+        stage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = stage.getX() - event.getScreenX();
+                yOffset = stage.getY() - event.getScreenY();
+            }
+        });
+
+        stage.getScene().setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.setX(event.getScreenX() + xOffset);
+                stage.setY(event.getScreenY() + yOffset);
+            }
+        });
+        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.setResizable(false);
+        AccountSettings controller = loader.getController();
+        controller.initialize();
+        stage.show();
+    }
+
+    public void biochange() throws IOException, FirebaseException {
+        Stage stage = new Stage();
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/changeBio.fxml"));
+        Scene scene = new Scene((Parent) loader.load());
+        scene.setFill(Color.TRANSPARENT);
+
+        stage.setScene(scene);
+        stage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = stage.getX() - event.getScreenX();
+                yOffset = stage.getY() - event.getScreenY();
+            }
+        });
+
+        stage.getScene().setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.setX(event.getScreenX() + xOffset);
+                stage.setY(event.getScreenY() + yOffset);
+            }
+        });
+        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.setResizable(false);
+        ChangeBio controller = loader.getController();
+        controller.initialize();
+        stage.show();
+    }
+
+    public void namechange(String name) throws IOException, FirebaseException {
+        Stage stage = new Stage();
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/changeName.fxml"));
+        Scene scene = new Scene((Parent) loader.load());
+        scene.setFill(Color.TRANSPARENT);
+
+        stage.setScene(scene);
+        stage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = stage.getX() - event.getScreenX();
+                yOffset = stage.getY() - event.getScreenY();
+            }
+        });
+
+        stage.getScene().setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.setX(event.getScreenX() + xOffset);
+                stage.setY(event.getScreenY() + yOffset);
+            }
+        });
+        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.setResizable(false);
+        ChangeName controller = loader.getController();
+        controller.initialize(name);
+        stage.show();
+    }
+
+
 }

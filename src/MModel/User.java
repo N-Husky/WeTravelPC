@@ -1,5 +1,7 @@
 package MModel;
 
+import net.thegreshams.firebase4j.error.FirebaseException;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -11,11 +13,11 @@ public class User {
     private String password;
     private String userLogin;
 
-    public String getUserInfo() {
-        return userInfo;
+    public String getUserInfo() throws IOException, FirebaseException {
+        return  DataBaseAccess.getInstance().getUserInfo(dataBaseReference).userInfo;
     }
-    public String getUserName(){
-        return userName;
+    public String getUserName() throws IOException, FirebaseException {
+        return DataBaseAccess.getInstance().getUserInfo(dataBaseReference).userName;
     }
     private String userInfo;
 
@@ -24,7 +26,14 @@ public class User {
     public String getPassword() {
         return password;
     }
-
+    public User(String userName, String profilePhotoReference, String dataBaseReference, String password, String userLogin, String userInfo) {
+        this.userName = userName;
+        this.profilePhotoReference = profilePhotoReference;
+        this.dataBaseReference = dataBaseReference;
+        this.password = password;
+        this.userLogin = userLogin;
+        this.userInfo = userInfo;
+    }
     public String getUserLogin() {
         return userLogin;
     }
@@ -43,8 +52,8 @@ public class User {
     public String getDataBaseReference(){
         return dataBaseReference;
     }
-    public String getProfilePhotoReference(){
-        return profilePhotoReference;
+    public String getProfilePhotoReference() throws IOException {
+        return DataBaseAccess.getInstance().getPhotoLink(dataBaseReference);
     }
     public void setProfilePhotoReference(String profilePhotoReference) {
         this.profilePhotoReference = profilePhotoReference;

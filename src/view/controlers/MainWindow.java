@@ -12,6 +12,7 @@ import com.dlsc.gmapsfx.javascript.object.*;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
 import com.google.common.collect.Lists;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -30,11 +31,15 @@ import javafx.stage.Window;
 import javafx.util.Callback;
 import net.thegreshams.firebase4j.error.FirebaseException;
 import netscape.javascript.JSObject;
+import org.json.simple.parser.ParseException;
 import view.StartPoint;
 import view.listView.Video;
 import view.listView.VideoListCell;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Observable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -84,6 +89,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
     }
 
     public void onAdd() {
+        listView.setVisible(false);
         my_videos.setVisible(false);
         upload_btn.setVisible(true);
         hideVideo();
@@ -153,7 +159,12 @@ public class MainWindow extends Window implements MapComponentInitializedListene
         upload_btn.setVisible(false);
         mapView.addMapInitializedListener(this);
         Image img;
-        img = new Image(DataBaseAccess.getInstance().getPhotoLink(DataBaseAccess.getInstance().getUser().getDataBaseReference()));
+        try {
+            img = new Image(DataBaseAccess.getInstance().getPhotoLink(DataBaseAccess.getInstance().getUser().getDataBaseReference()));
+        } catch (NullPointerException e) {
+            img = new Image("view/css/default_profile_img.jpg");
+        }
+
         image_circle.setFill(new ImagePattern(img));
         Image logout = new Image("view/css/log-out.png");
         Image settings = new Image("view/css/settings.png");
@@ -164,6 +175,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
     }
 
     public void onShow() {
+        listView.setVisible(false);
         my_videos.setVisible(false);
         upload_btn.setVisible(false);
         if (marker_load != null)
@@ -188,7 +200,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
             final VideoMarker vidM = vid;
             markerOptions.position(new LatLong(vidM.getX(), vidM.getY()));
             final Marker marker = new Marker(markerOptions);
-            marker.setTitle(new LatLong(vidM.getX(), vidM.getY()).toString());
+            marker.setTitle(vid.getVideoName());
 
             map.addUIEventHandler(marker, UIEventType.click, jsObject -> {
                 Media media = null;
@@ -230,11 +242,8 @@ public class MainWindow extends Window implements MapComponentInitializedListene
                     } else if (mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
                         mediaPlayer.play();
                     } else {
-                        //TODO  Після закінчення відео, повтор
                     }
                 });
-
-                //TODO придумати вивід відео
                 videoView.setMediaPlayer(mediaPlayer);
                 anchorPane.setVisible(true);
             });
@@ -266,7 +275,10 @@ public class MainWindow extends Window implements MapComponentInitializedListene
 
     }
 
-    public void onSearch() {
+    public void onSearch() throws IOException, ParseException {
+        map.setZoom(5);
+        map.setCenter(new LatLong(Double.parseDouble(DataBaseAccess.getInstance().getCountryCoordinates(search_field.getText()).split("/")[0]),
+                Double.parseDouble(DataBaseAccess.getInstance().getCountryCoordinates(search_field.getText()).split("/")[1])));
 
     }
 
@@ -274,38 +286,137 @@ public class MainWindow extends Window implements MapComponentInitializedListene
         (new StartPoint()).acceptor(this, "Do you want to log-out?", new Consumer() {
             @Override
             public void accept(Object o) {
-                    DataBaseAccess.getInstance().deleteCredentials();
-                    onClose();
+                DataBaseAccess.getInstance().deleteCredentials();
+                onClose();
             }
         });
 
     }
 
-    public void onSetings() {
-        //TODO settings
+    public void onSetings() throws IOException, FirebaseException {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    (new StartPoint()).settings();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (FirebaseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
-    public void onMyVideos() {
+    VideoMarker videoMarker;
+
+
+
+    ArrayList<VideoMarker> help;
+    public void onMyVideos() throws IOException {
         upload_btn.setVisible(false);
         my_videos.setVisible(true);
-        listView.setCellFactory(new Callback<ListView, ListCell>() {
-            @Override
-            public ListCell call(ListView param) {
-                return VideoListCell.newInstance();
-            }
-        });
-
-        ObservableList<Video> videos = FXCollections.observableArrayList();
-        videos.add(new Video().date("13.12.2020").name("Gopka"));
-
-        videos.add(new Video().date("29.2.2020").name("Hell"));
-        videos.add(new Video().date("1.9.2020").name("Byvoyno"));
-
-        listView.focusModelProperty();
-
+        listView.setVisible(false);
+        help = DataBaseAccess.getInstance().getUserVideos();
+        ObservableList<String> videos = DataBaseAccess.getInstance().getUserVideoNames(help);
+        listView.setOnMouseClicked(event -> listViewSelectedCar());
         listView.setItems(videos);
-        //TODO onClickListner
-        //TODO Delete
+
+        if (marker_load != null)
+            marker_load.setVisible(false);
+        markerForUpload = null;
+
+        final MapOptions mapOptions = new MapOptions();
+        mapOptions.center(new LatLong(52.888, 51.556))
+                .overviewMapControl(false)
+                .panControl(false)
+                .rotateControl(false)
+                .scaleControl(false)
+                .streetViewControl(false)
+                .zoomControl(false)
+                .zoom(5)
+                .minZoom(3);
+
+        map = mapView.createMap(mapOptions);
+
+        MarkerOptions markerOptions = new MarkerOptions();
+        for (VideoMarker vid : help) {
+            final VideoMarker vidM = vid;
+            markerOptions.position(new LatLong(vidM.getX(), vidM.getY()));
+            final Marker marker = new Marker(markerOptions);
+            marker.setTitle(vid.getVideoName());
+
+            map.addUIEventHandler(marker, UIEventType.click, jsObject -> {
+                Media media = null;
+                try {
+                    media = new Media(DataBaseAccess.getInstance().getVideoPlayerLink(vidM));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Image img = null;
+                try {
+                    img = new Image(DataBaseAccess.getInstance().getPhotoLink(vid.getVideoReference().split("/")[0]));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    poster_name.setText(DataBaseAccess.getInstance().getUserInfo(vid.getVideoReference().split("/")[0]).getUserName());
+                } catch (FirebaseException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                poster_photo.setFill(new ImagePattern(img));
+                poster_name.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        try {
+                            (new StartPoint()).loaderInfo(vidM);
+                        } catch (IOException | FirebaseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                final MediaPlayer mediaPlayer = new MediaPlayer(media);
+                mediaPlayer.setAutoPlay(true);
+                videoView.setOnMouseClicked(event -> {
+                    if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+                        mediaPlayer.pause();
+                        return;
+                    } else if (mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
+                        mediaPlayer.play();
+                    } else {
+                    }
+                });
+                videoView.setMediaPlayer(mediaPlayer);
+                anchorPane.setVisible(true);
+            });
+            map.addUIEventHandler(marker, UIEventType.mouseover, new UIEventHandler() {
+                @Override
+                public void handle(JSObject jsObject) {
+                    final InfoWindowOptions infoOptions = new InfoWindowOptions();
+                    infoOptions.content(marker.getTitle());
+                    final InfoWindow window = new InfoWindow(infoOptions);
+                    window.open(map, marker);
+                    map.addUIEventHandler(marker, UIEventType.mouseout, new UIEventHandler() {
+                        @Override
+                        public void handle(JSObject jsObject) {
+                            window.close();
+                        }
+                    });
+                }
+            });
+            map.addMarker(marker);
+        }
+    }
+
+    void listViewSelectedCar() {
+        map.setCenter(DataBaseAccess.getInstance().getVideoMarkerByName(help,(String)listView.getSelectionModel().getSelectedItem()).getLatLong());
+    }
+    public void onDeleteMyVideo() throws IOException {
+        DataBaseAccess.getInstance().deleteVideo(DataBaseAccess.getInstance().getVideoMarkerByName(help,(String)listView.getSelectionModel().getSelectedItem()).getVideoReference());
+    onMyVideos();
     }
 
     public void onHide() {

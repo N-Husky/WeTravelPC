@@ -4,6 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
+<?import com.jfoenix.controls.JFXButton?>
 <AnchorPane prefHeight="131.0" prefWidth="538.0" style="-fx-background-color: linear-gradient(to right bottom, #486ff9, #4b61e0, #4b54c7, #4847af, #433b98); -fx-background-radius: 20;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controlers.AcceptWindow">
    <children>
       <Label fx:id="string" alignment="CENTER" contentDisplay="CENTER" layoutY="24.0" prefHeight="29.0" prefWidth="539.0" text=":(((" textAlignment="CENTER" textFill="WHITE">
@@ -11,15 +12,15 @@
             <Font name="MS Outlook" size="25.0" />
          </font>
       </Label>
-      <Button layoutX="33.0" layoutY="74.0" mnemonicParsing="false" onAction="#onOk" prefHeight="34.0" prefWidth="62.0" style="-fx-background-insets: 0 0 0 0; -fx-background-color: #9bbaff;" text="Yes">
+      <JFXButton layoutX="33.0" layoutY="74.0" mnemonicParsing="false" onAction="#onOk" prefHeight="34.0" prefWidth="62.0" style="-fx-background-insets: 0 0 0 0; -fx-background-color: #9bbaff;" text="Yes">
          <font>
             <Font name="MS Outlook" size="18.0" />
          </font>
-      </Button>
-      <Button layoutX="444.0" layoutY="74.0" mnemonicParsing="false" onAction="#onNot" prefHeight="34.0" prefWidth="62.0" style="-fx-background-insets: 0 0 0 0; -fx-background-color: #9bbaff;" text="No">
+      </JFXButton>
+      <JFXButton layoutX="444.0" layoutY="74.0" mnemonicParsing="false" onAction="#onNot" prefHeight="34.0" prefWidth="62.0" style="-fx-background-insets: 0 0 0 0; -fx-background-color: #9bbaff;" text="No">
          <font>
             <Font name="MS Outlook" size="18.0" />
          </font>
-      </Button>
+      </JFXButton>
    </children>
 </AnchorPane>
