@@ -27,7 +27,7 @@
                             </opaqueInsets>
                         </JFXButton>
 
-                        <TextField fx:id="search_field" layoutX="21.0" layoutY="28.0" opacity="0.67" prefHeight="37.0" prefWidth="262.0" promptText="Search location...." style="-fx-background-radius: 17 0 0 17;">
+                        <TextField     fx:id="search_field" layoutX="21.0" layoutY="28.0" opacity="0.67" prefHeight="37.0" prefWidth="262.0" promptText="Search location...." style="-fx-background-radius: 17 0 0 17;">
                             <opaqueInsets>
                                 <Insets />
                             </opaqueInsets>

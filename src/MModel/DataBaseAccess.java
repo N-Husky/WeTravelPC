@@ -6,10 +6,9 @@ import com.google.api.gax.paging.Page;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
 import com.google.common.collect.Lists;
-import com.google.firebase.database.core.Path;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.image.Image;
 import net.thegreshams.firebase4j.error.FirebaseException;
 import net.thegreshams.firebase4j.error.JacksonUtilityException;
 import net.thegreshams.firebase4j.model.FirebaseResponse;
@@ -19,8 +18,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import javax.xml.crypto.Data;
-import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -67,10 +64,29 @@ public class DataBaseAccess {
     private boolean logining(String login, String password) throws FirebaseException, IOException, PasswordIncorectException {
         if (!checkLoginPassword(login, password))
             throw new PasswordIncorectException();
-
-        user = new User(login, password, getUserLink(login));
-        User tempUser = this.getUserInfo(user.getDataBaseReference());
-        user = new User(tempUser.getUserName(),tempUser.getProfilePhotoReference(),tempUser.getDataBaseReference(),password,login,tempUser.getUserInfo());
+        Firebase firebase = new Firebase(firebase_baseUrl);
+        FirebaseResponse response = firebase.get();
+        Map<String, Object> dataMap = new LinkedHashMap<String, Object>();
+        dataMap = response.getBody();
+        dataMap = (Map) dataMap.get("users");
+        Set<String> codeKeys = dataMap.keySet();
+        Map<String, Object> dataMap2 = null;
+        String key = null;
+        for (String states : codeKeys) {
+            dataMap2 = (Map) dataMap.get(states);
+            if (dataMap2.containsValue(login)) {
+                key = states;
+                break;
+            }
+        }
+        dataMap2.clear();
+        dataMap = response.getBody();
+        dataMap = (Map) dataMap.get("user_data");
+        dataMap = (Map<String, Object>) dataMap.get(key);
+        user = new User(login,password,dataMap.get("user_name").toString(),dataMap.get("user_info").toString(),key);
+//        user = new User(login, password, getUserLink(login));
+//        User tempUser = this.getUserInfo(user.getDataBaseReference());
+//        user = new User(tempUser.getUserName(),tempUser.getProfilePhotoReference(),tempUser.getDataBaseReference(),password,login,tempUser.getUserInfo());
         return true;
     }
 
@@ -78,8 +94,8 @@ public class DataBaseAccess {
         if (checkMailExistence(login)) {
             throw new MailExistException();
         }
-        registration(login, password);
-        user = new User(login, password, getUserLink(login));
+        String key = registration(login, password);
+        user = new User(login,password,login.split("@")[0],"Hello world",key);
         return true;
     }
 
@@ -136,7 +152,7 @@ public class DataBaseAccess {
         return false;
     }
 
-    private void registration(String login, String password) throws FirebaseException, UnsupportedEncodingException, JacksonUtilityException {
+    private String registration(String login, String password) throws FirebaseException, UnsupportedEncodingException, JacksonUtilityException {
         Firebase firebase = new Firebase(firebase_baseUrl);
         FirebaseResponse response = firebase.get();
         Map<String, Object> dataMap = new LinkedHashMap<String, Object>();
@@ -161,6 +177,7 @@ public class DataBaseAccess {
         dataMap2.put("user_info", "Hello world");
         dataMap2.put("user_name", login.split("@")[0]);
         response = firebase.put("user_data/" + key, dataMap2);
+        return key;
     }
 
     public void changePassword(String new_password, String old_password) throws FirebaseException, UnsupportedEncodingException, PasswordIncorectException, JacksonUtilityException {
@@ -327,8 +344,8 @@ public class DataBaseAccess {
         BlobId blobId = BlobId.of(bucketName, objectName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
         storage.create(blobInfo, Files.readAllBytes(Paths.get(filePath)));
-        user.setProfilePhotoReference(objectName);
-        user.setPhotoPath(pathToPhoto);
+//        user.setProfilePhotoReference(objectName);
+//        user.setPhotoPath(pathToPhoto);
     }
 
     public boolean checkPhotoExistence() throws IOException {//проверяет есть ли фото пользователя на сервере
@@ -377,7 +394,7 @@ public class DataBaseAccess {
         Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
         String bucketName = "wetravel-1591a.appspot.com";
         Bucket bucket = storage.get(bucketName);
-        Blob blob = storage.get(BlobId.of(bucketName, "profile_img"));
+        Blob blob = storage.get(bucketName, user.getDataBaseReference()+"profile_img");
         blob.downloadTo(Paths.get(".//"));
     }
 
@@ -458,14 +475,16 @@ public class DataBaseAccess {
         return user;
     }
 
-    public User getUserInfo(String userReference) throws FirebaseException, IOException {
+    public OtherUserInfo getUserInfo(String userReference) throws FirebaseException, IOException {
         Firebase firebase = new Firebase("https://wetravel-1591a.firebaseio.com/");
         FirebaseResponse response = firebase.get();
         Map<String, Object> dataMap = response.getBody();
         dataMap = (Map) dataMap.get("user_data");
         Map<String, Object> dataMap2 = (Map) dataMap.get(userReference);
-        return new User(userReference + "/profile_img", dataMap2.get("user_name").toString(), dataMap2.get("user_info").toString(), userReference);
+//        return new User(userReference + "/profile_img", dataMap2.get("user_name").toString(), dataMap2.get("user_info").toString(), userReference);
+        return new OtherUserInfo(dataMap.get("user_name").toString(), dataMap.get("user_info").toString(),userReference);
     }
+
 
     public String getCountryCoordinates(String countryName) throws IOException, ParseException {
         JSONParser parser = new JSONParser();

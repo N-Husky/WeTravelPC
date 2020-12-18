@@ -131,7 +131,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
     @Override
     public void mapInitialized() {
         if (firstin) {
-            onShow();
+            //onShow();
             firstin = false;
         }
 
@@ -216,6 +216,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
                     e.printStackTrace();
                 }
                 try {
+
                     poster_name.setText(DataBaseAccess.getInstance().getUserInfo(vid.getVideoReference().split("/")[0]).getUserName());
                 } catch (FirebaseException e) {
                     e.printStackTrace();
@@ -361,7 +362,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
                     e.printStackTrace();
                 }
                 try {
-                    poster_name.setText(DataBaseAccess.getInstance().getUserInfo(vid.getVideoReference().split("/")[0]).getUserName());
+                    poster_name.setText(DataBaseAccess.getInstance().getUserInfo(vid.getVideoReference().split("/")[0]).getUserName());//will wait for dataBase
                 } catch (FirebaseException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
