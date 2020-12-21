@@ -19,7 +19,7 @@
             33, 
             65
         ], 
-        "name": "Afghanistan", 
+        "name": "Afghanistan",
         "country_code": "AF", 
         "capital": "Kabul"
     }, 
@@ -31,7 +31,7 @@
             -12.5, 
             18.5
         ], 
-        "name": "Angola", 
+        "name": "Angola",
         "country_code": "AO", 
         "capital": "Luanda"
     }, 
@@ -207,7 +207,7 @@
             -27, 
             133
         ], 
-        "name": "Australia", 
+        "name": "Australia",
         "country_code": "AU", 
         "capital": "Canberra"
     }, 
@@ -587,7 +587,7 @@
             35, 
             105
         ], 
-        "name": "China", 
+        "name": "China",
         "country_code": "CN", 
         "capital": "Beijing"
     }, 

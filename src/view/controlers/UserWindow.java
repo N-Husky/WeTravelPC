@@ -2,6 +2,7 @@ package view.controlers;
 
 import MModel.DataBaseAccess;
 import MModel.OtherUserInfo;
+import MModel.User;
 import MModel.VideoMarker;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -22,18 +23,18 @@ public class UserWindow extends Window {
     TextArea info_user;
     public Label user_info;
     private String bio;
+
     public void initialize(VideoMarker vidM) throws IOException, FirebaseException {
 
         Image img = new Image(DataBaseAccess.getInstance().getPhotoLink(vidM.getVideoReference().split("/")[0]));
         profile_img.setFill(new ImagePattern(img));
-        OtherUserInfo otherU = DataBaseAccess.getInstance().getUserInfo(vidM.getVideoReference().split("/")[0]);
-//        user_info.setText(DataBaseAccess.getInstance().getUserInfo(vidM.getVideoReference().split("/")[0]).getUserName());
-//        bio = DataBaseAccess.getInstance().getUserInfo(vidM.getVideoReference().split("/")[0]).getUserInfo();
+        User otherU = DataBaseAccess.getInstance().getUserInfo(vidM.getVideoReference().split("/")[0]);
+        user_info.setText(DataBaseAccess.getInstance().getUserInfo(vidM.getVideoReference().split("/")[0]).getUserName());
+        bio = DataBaseAccess.getInstance().getUserInfo(vidM.getVideoReference().split("/")[0]).getUserInfo();
         user_info.setText(otherU.getUserName());
         bio = otherU.getUserInfo();
         info_user.setText(bio);
         info_user.setEditable(false);
-
     }
 
     public void onClose() {

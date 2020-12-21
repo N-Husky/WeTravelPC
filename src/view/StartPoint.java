@@ -1,7 +1,8 @@
 package view;
 
-import MModel.DataBaseAccess;
 import MModel.VideoMarker;
+import MModel.exeptions.MailExistException;
+import MModel.exeptions.PasswordIncorectException;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -13,7 +14,9 @@ import javafx.scene.paint.Color;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import net.thegreshams.firebase4j.error.FirebaseException;
+import net.thegreshams.firebase4j.error.JacksonUtilityException;
 import view.controlers.*;
+import view.fxml.MyVideo;
 
 import java.io.IOException;
 import java.util.function.Consumer;
@@ -240,5 +243,43 @@ public class StartPoint extends Application {
         stage.show();
     }
 
+    public void videoShow(Consumer consumer) throws IOException, FirebaseException {
+        Stage stage = new Stage();
+        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("fxml/MyVideo.fxml"));
+        Scene scene = new Scene((Parent) loader.load());
+        scene.setFill(Color.TRANSPARENT);
+        scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
+        stage.setScene(scene);
+        stage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = stage.getX() - event.getScreenX();
+                yOffset = stage.getY() - event.getScreenY();
+            }
+        });
+
+        stage.getScene().setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.setX(event.getScreenX() + xOffset);
+                stage.setY(event.getScreenY() + yOffset);
+            }
+        });
+        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.setResizable(false);
+        MyVideo controller = loader.getController();
+        try {
+            controller.initialize(consumer);
+        } catch (JacksonUtilityException e) {
+            e.printStackTrace();
+        } catch (FirebaseException e) {
+            e.printStackTrace();
+        } catch (PasswordIncorectException e) {
+            e.printStackTrace();
+        } catch (MailExistException e) {
+            e.printStackTrace();
+        }
+        stage.show();
+    }
 
 }

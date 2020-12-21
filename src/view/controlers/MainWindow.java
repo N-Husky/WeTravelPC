@@ -2,6 +2,8 @@ package view.controlers;
 
 import MModel.DataBaseAccess;
 import MModel.VideoMarker;
+import MModel.exeptions.MailExistException;
+import MModel.exeptions.PasswordIncorectException;
 import com.dlsc.gmapsfx.GoogleMapView;
 import com.dlsc.gmapsfx.MapComponentInitializedListener;
 import com.dlsc.gmapsfx.javascript.event.GMapMouseEvent;
@@ -9,15 +11,15 @@ import com.dlsc.gmapsfx.javascript.event.MouseEventHandler;
 import com.dlsc.gmapsfx.javascript.event.UIEventHandler;
 import com.dlsc.gmapsfx.javascript.event.UIEventType;
 import com.dlsc.gmapsfx.javascript.object.*;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.storage.*;
-import com.google.common.collect.Lists;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.Media;
@@ -26,37 +28,36 @@ import javafx.scene.media.MediaView;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.util.Callback;
+import javafx.util.Duration;
 import net.thegreshams.firebase4j.error.FirebaseException;
+import net.thegreshams.firebase4j.error.JacksonUtilityException;
 import netscape.javascript.JSObject;
 import org.json.simple.parser.ParseException;
 import view.StartPoint;
 import view.listView.Video;
-import view.listView.VideoListCell;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Observable;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class MainWindow extends Window implements MapComponentInitializedListener {
 
     public GoogleMapView mapView;
     public AnchorPane anchorPane;
-    public MediaView videoView;
+    public WebView videoView;
     public TextField search_field;
     public Button upload_btn;
     public Circle image_circle;
     public Rectangle logout;
     public Rectangle setings;
-    public AnchorPane my_videos;
-    public ListView listView;
     public Label poster_name;
     public Circle poster_photo;
+    public AnchorPane pain;
+    public Rectangle hiderPain;
     private GoogleMap map;
     private Marker marker_load;
     private boolean firstin = true;
@@ -87,10 +88,9 @@ public class MainWindow extends Window implements MapComponentInitializedListene
             }
         });
     }
+
     //TO PUSH
     public void onAdd() {
-        listView.setVisible(false);
-        my_videos.setVisible(false);
         upload_btn.setVisible(true);
         hideVideo();
         final MapOptions mapOptions = new MapOptions();
@@ -130,10 +130,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
 
     @Override
     public void mapInitialized() {
-        if (firstin) {
-            //onShow();
-            firstin = false;
-        }
+
 
         Stage stage = (Stage) this.anchorPane.getScene().getWindow();
         stage.getScene().setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -152,10 +149,15 @@ public class MainWindow extends Window implements MapComponentInitializedListene
                 stage.setY(event.getScreenY() + yOffset);
             }
         });
+        if (firstin) {
+            onShow();
+            firstin = false;
+        }
     }
 
 
     public void initialize() throws IOException {
+
         upload_btn.setVisible(false);
         mapView.addMapInitializedListener(this);
         Image img;
@@ -164,19 +166,17 @@ public class MainWindow extends Window implements MapComponentInitializedListene
         } catch (NullPointerException e) {
             img = new Image("view/css/default_profile_img.jpg");
         }
-
         image_circle.setFill(new ImagePattern(img));
         Image logout = new Image("view/css/log-out.png");
         Image settings = new Image("view/css/settings.png");
+        Image left = new Image("view/css/left-arrow-line-symbol.png");
+        hiderPain.setFill(new ImagePattern(left));
         this.logout.setFill(new ImagePattern(logout));
         this.setings.setFill(new ImagePattern(settings));
-
-
     }
 
     public void onShow() {
-        listView.setVisible(false);
-        my_videos.setVisible(false);
+
         upload_btn.setVisible(false);
         if (marker_load != null)
             marker_load.setVisible(false);
@@ -203,12 +203,16 @@ public class MainWindow extends Window implements MapComponentInitializedListene
             marker.setTitle(vid.getVideoName());
 
             map.addUIEventHandler(marker, UIEventType.click, jsObject -> {
-                Media media = null;
+
+                WebEngine webEngine = videoView.getEngine();
+                webEngine.setJavaScriptEnabled(true);
                 try {
-                    media = new Media(DataBaseAccess.getInstance().getVideoPlayerLink(vidM));
+                    videoView.getEngine().load(DataBaseAccess.getInstance().getVideoPlayerLink(vidM));
+                    System.out.println(DataBaseAccess.getInstance().getVideoPlayerLink(vidM));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
                 Image img = null;
                 try {
                     img = new Image(DataBaseAccess.getInstance().getPhotoLink(vid.getVideoReference().split("/")[0]));
@@ -216,7 +220,6 @@ public class MainWindow extends Window implements MapComponentInitializedListene
                     e.printStackTrace();
                 }
                 try {
-
                     poster_name.setText(DataBaseAccess.getInstance().getUserInfo(vid.getVideoReference().split("/")[0]).getUserName());
                 } catch (FirebaseException e) {
                     e.printStackTrace();
@@ -234,18 +237,6 @@ public class MainWindow extends Window implements MapComponentInitializedListene
                         }
                     }
                 });
-                final MediaPlayer mediaPlayer = new MediaPlayer(media);
-                mediaPlayer.setAutoPlay(true);
-                videoView.setOnMouseClicked(event -> {
-                    if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
-                        mediaPlayer.pause();
-                        return;
-                    } else if (mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
-                        mediaPlayer.play();
-                    } else {
-                    }
-                });
-                videoView.setMediaPlayer(mediaPlayer);
                 anchorPane.setVisible(true);
             });
             map.addUIEventHandler(marker, UIEventType.mouseover, new UIEventHandler() {
@@ -294,7 +285,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
 
     }
 
-    public void onSetings() throws IOException, FirebaseException {
+    public void onSetings() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -310,19 +301,11 @@ public class MainWindow extends Window implements MapComponentInitializedListene
 
     }
 
-    VideoMarker videoMarker;
-
-
-
     ArrayList<VideoMarker> help;
-    public void onMyVideos() throws IOException {
+    public void onMyVideos() throws IOException, JacksonUtilityException, PasswordIncorectException, FirebaseException, MailExistException {
         upload_btn.setVisible(false);
-        my_videos.setVisible(true);
-        listView.setVisible(false);
+
         help = DataBaseAccess.getInstance().getUserVideos();
-        ObservableList<String> videos = DataBaseAccess.getInstance().getUserVideoNames(help);
-        listView.setOnMouseClicked(event -> listViewSelectedCar());
-        listView.setItems(videos);
 
         if (marker_load != null)
             marker_load.setVisible(false);
@@ -349,12 +332,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
             marker.setTitle(vid.getVideoName());
 
             map.addUIEventHandler(marker, UIEventType.click, jsObject -> {
-                Media media = null;
-                try {
-                    media = new Media(DataBaseAccess.getInstance().getVideoPlayerLink(vidM));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
                 Image img = null;
                 try {
                     img = new Image(DataBaseAccess.getInstance().getPhotoLink(vid.getVideoReference().split("/")[0]));
@@ -379,20 +357,16 @@ public class MainWindow extends Window implements MapComponentInitializedListene
                         }
                     }
                 });
-                final MediaPlayer mediaPlayer = new MediaPlayer(media);
-                mediaPlayer.setAutoPlay(true);
-                videoView.setOnMouseClicked(event -> {
-                    if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
-                        mediaPlayer.pause();
-                        return;
-                    } else if (mediaPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
-                        mediaPlayer.play();
-                    } else {
-                    }
-                });
-                videoView.setMediaPlayer(mediaPlayer);
+                WebEngine webEngine = videoView.getEngine();
+                webEngine.setJavaScriptEnabled(true);
+                try {
+                    videoView.getEngine().load(DataBaseAccess.getInstance().getVideoPlayerLink(vidM));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 anchorPane.setVisible(true);
             });
+
             map.addUIEventHandler(marker, UIEventType.mouseover, new UIEventHandler() {
                 @Override
                 public void handle(JSObject jsObject) {
@@ -410,18 +384,32 @@ public class MainWindow extends Window implements MapComponentInitializedListene
             });
             map.addMarker(marker);
         }
-    }
-
-    void listViewSelectedCar() {
-        map.setCenter(DataBaseAccess.getInstance().getVideoMarkerByName(help,(String)listView.getSelectionModel().getSelectedItem()).getLatLong());
-    }
-    public void onDeleteMyVideo() throws IOException {
-        DataBaseAccess.getInstance().deleteVideo(DataBaseAccess.getInstance().getVideoMarkerByName(help,(String)listView.getSelectionModel().getSelectedItem()).getVideoReference());
-    onMyVideos();
+        (new StartPoint()).videoShow(new Consumer<LatLong>() {
+            @Override
+            public void accept(LatLong latLong) {
+        map.setCenter(latLong);
+            }
+        });
     }
 
     public void onHide() {
         Stage stage = (Stage) this.anchorPane.getScene().getWindow();
         stage.setIconified(true);
+    }
+
+
+    boolean hide = true;
+    public void hidePain() {
+        if (hide) {
+            Image settings = new Image("view/css/right-arrow-line-symbol.png");
+            hiderPain.setFill(new ImagePattern(settings));
+            pain.setTranslateX(-290);
+            hide= false;
+        } else {
+            Image settings = new Image("view/css/left-arrow-line-symbol.png");
+            hiderPain.setFill(new ImagePattern(settings));
+            pain.setTranslateX(0);
+            hide = true;
+        }
     }
 }

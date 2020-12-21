@@ -25,14 +25,14 @@
                     <Font name="MS Outlook" size="20.0" />
                 </font>
             </Label>
-            <JFXButton graphicTextGap="0.0" layoutX="550.0" layoutY="14.0" mnemonicParsing="false" onAction="#onClose" prefHeight="25.0" prefWidth="30.0" style="-fx-background-radius: 100; -fx-background-color: #4b54c7;" text="X" textAlignment="CENTER" textFill="WHITE" />
+            <JFXButton fx:id="close" graphicTextGap="0.0" layoutX="550.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="30.0" style="-fx-background-radius: 100; -fx-background-color: #4b54c7;" text="X" textAlignment="CENTER" textFill="WHITE" />
           
-            <JFXButton layoutX="215.0" layoutY="187.0" mnemonicParsing="false" onAction="#onUpload" prefHeight="36.0" prefWidth="160.0" style="-fx-background-radius: 3334; -fx-background-insets: 0 0 0 0; -fx-background-color: #4b54c7;" text="Підтвердити" textFill="WHITE">
+            <JFXButton layoutX="215.0" layoutY="187.0" mnemonicParsing="false" fx:id="upload" prefHeight="36.0" prefWidth="160.0" style="-fx-background-radius: 3334; -fx-background-insets: 0 0 0 0; -fx-background-color: #4b54c7;" text="Підтвердити" textFill="WHITE">
                 <font>
                     <Font name="MS Outlook" size="16.0" />
                 </font>
             </JFXButton>
-            <JFXButton layoutX="409.0" layoutY="65.0" mnemonicParsing="false" onAction="#onReload" prefHeight="36.0" prefWidth="141.0" style="-fx-background-radius: 3334; -fx-background-insets: 0 0 0 0; -fx-background-color: #4b54c7;" text="Змінити файл" textFill="WHITE">
+            <JFXButton layoutX="409.0" layoutY="65.0" mnemonicParsing="false" fx:id="reload" prefHeight="36.0" prefWidth="141.0" style="-fx-background-radius: 3334; -fx-background-insets: 0 0 0 0; -fx-background-color: #4b54c7;" text="Змінити файл" textFill="WHITE">
                 <font>
                     <Font name="MS Outlook" size="16.0" />
                 </font>

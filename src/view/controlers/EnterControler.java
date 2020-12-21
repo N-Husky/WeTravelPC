@@ -4,6 +4,8 @@ import MModel.DataBaseAccess;
 import MModel.User;
 import MModel.exeptions.MailExistException;
 import MModel.exeptions.PasswordIncorectException;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -46,8 +48,8 @@ public class EnterControler {
     private Pattern p = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{1,})$");
 
-    public void initialize(){
-        if(DataBaseAccess.getInstance().checkCredentials()){
+    public void initialize() {
+        if (DataBaseAccess.getInstance().checkCredentials()) {
 
             forLogin();
             email.setText(DataBaseAccess.getInstance().getCredentialsFromFile().split("/")[0]);
@@ -70,11 +72,25 @@ public class EnterControler {
                 eror1.setText("Email is already registrated");
             }
             if (i) {
-                if(toBeSignedIn.isSelected()){
-                    DataBaseAccess.getInstance().createCredentialsTmp();
-                } else {
-                    DataBaseAccess.getInstance().deleteCredentials();
-                }
+
+                Service<Void> service = new Service<Void>() {
+                    @Override
+                    protected Task<Void> createTask() {
+                        return new Task<Void>() {
+                            @Override
+                            protected Void call() throws Exception {
+                                if (toBeSignedIn.isSelected()) {
+                                    DataBaseAccess.getInstance().createCredentialsTmp();
+                                } else {
+                                    DataBaseAccess.getInstance().deleteCredentials();
+                                }
+                                return null;
+                            }
+                        };
+                    }
+                };
+                service.start();
+
                 onClose();
             }
         } else {
@@ -90,12 +106,24 @@ public class EnterControler {
 
             }
             System.out.println(DataBaseAccess.getInstance().getUser().getUserLogin()); // не трогать!!!!!!!!
-            if (i){
-                if(toBeSignedIn.isSelected()){
-                    DataBaseAccess.getInstance().createCredentialsTmp();
-                } else {
-                    DataBaseAccess.getInstance().deleteCredentials();
-                }
+            if (i) {
+                Service<Void> service = new Service<Void>() {
+                    @Override
+                    protected Task<Void> createTask() {
+                        return new Task<Void>() {
+                            @Override
+                            protected Void call() throws Exception {
+                                if (toBeSignedIn.isSelected()) {
+                                    DataBaseAccess.getInstance().createCredentialsTmp();
+                                } else {
+                                    DataBaseAccess.getInstance().deleteCredentials();
+                                }
+                                return null;
+                            }
+                        };
+                    }
+                };
+                service.start();
                 onClose();
             }
         }
@@ -107,14 +135,11 @@ public class EnterControler {
         stage.close();
     }
 
-    public void logining_btn() throws IOException, InterruptedException {
-        //email.setText("zmejka0@gmail.com");
-        //password.setText("qqqqqqqq");
+    public void logining_btn() {
         forLogin();
     }
 
-    public void registration_btn() throws IOException {
-
+    public void registration_btn() {
         forRegister();
     }
 
@@ -155,7 +180,6 @@ public class EnterControler {
         point = true;
         label.setText("Registration");
     }
-
 
     private boolean checkEverything() {
         boolean check = true;
@@ -198,7 +222,6 @@ public class EnterControler {
 
         return check;
     }
-
 
     public void hide() {
         eror1.setVisible(false);

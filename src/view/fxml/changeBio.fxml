@@ -17,13 +17,13 @@
             <Font size="23.0" />
          </font>
       </Label>
-      <Button layoutX="34.0" layoutY="417.0" mnemonicParsing="false" onAction="#onYes" prefHeight="34.0" prefWidth="59.0" style="-fx-background-insets: 0 0 0 0, 0 0 0 0; -fx-background-color: #4b54c7;" text="Yes" textFill="WHITE">
+      <JFXButton layoutX="34.0" layoutY="417.0" mnemonicParsing="false" onAction="#onYes" prefHeight="34.0" prefWidth="59.0" style="-fx-background-insets: 0 0 0 0, 0 0 0 0; -fx-background-color: #4b54c7;" text="Yes" textFill="WHITE">
          <font>
             <Font name="MS Outlook" size="17.0" />
-         </font></Button>
-      <Button layoutX="509.0" layoutY="417.0" mnemonicParsing="false" onAction="#onNo" prefHeight="34.0" prefWidth="59.0" style="-fx-background-insets: 0 0 0 0, 0 0 0 0; -fx-background-color: #4b54c7;" text="No" textFill="WHITE">
+         </font></JFXButton>
+      <JFXButton layoutX="509.0" layoutY="417.0" mnemonicParsing="false" onAction="#onNo" prefHeight="34.0" prefWidth="59.0" style="-fx-background-insets: 0 0 0 0, 0 0 0 0; -fx-background-color: #4b54c7;" text="No" textFill="WHITE">
          <font>
             <Font name="MS Outlook" size="17.0" />
-         </font></Button>
+         </font></JFXButton>
    </children>
 </AnchorPane>
