@@ -38,7 +38,7 @@ import net.thegreshams.firebase4j.error.JacksonUtilityException;
 import netscape.javascript.JSObject;
 import org.json.simple.parser.ParseException;
 import view.StartPoint;
-import view.listView.Video;
+
 
 import java.io.*;
 import java.util.ArrayList;
@@ -69,6 +69,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
     public void hideVideo() {
         System.out.println("++++++");
         anchorPane.setVisible(false);
+        videoView.getEngine().load("");
     }
 
     public void onUserPhotoChange() throws IOException {
@@ -124,6 +125,7 @@ public class MainWindow extends Window implements MapComponentInitializedListene
 
     public void onClose() {
         Stage stage = (Stage) this.anchorPane.getScene().getWindow();
+        onHide();
         stage.close();
     }
     //not done
@@ -176,12 +178,10 @@ public class MainWindow extends Window implements MapComponentInitializedListene
     }
 
     public void onShow() {
-
         upload_btn.setVisible(false);
         if (marker_load != null)
             marker_load.setVisible(false);
         markerForUpload = null;
-
         final MapOptions mapOptions = new MapOptions();
         mapOptions.center(new LatLong(52.888, 51.556))
                 .overviewMapControl(false)
@@ -282,7 +282,6 @@ public class MainWindow extends Window implements MapComponentInitializedListene
                 onClose();
             }
         });
-
     }
 
     public void onSetings() {
@@ -387,12 +386,17 @@ public class MainWindow extends Window implements MapComponentInitializedListene
         (new StartPoint()).videoShow(new Consumer<LatLong>() {
             @Override
             public void accept(LatLong latLong) {
-        map.setCenter(latLong);
+        if (latLong.equals(new LatLong(666,666))) {
+
+                onShow();
+
+        }
+            else map.setCenter(latLong);
             }
         });
     }
 
-    public void onHide() {
+    public void onHide(){
         Stage stage = (Stage) this.anchorPane.getScene().getWindow();
         stage.setIconified(true);
     }

@@ -36,7 +36,7 @@
                                 <Font name="Arial Bold" size="16.0" />
                             </font>
                         </Button>
-                        <AnchorPane fx:id="anchorPane" onSwipeLeft="#hideVideo" prefHeight="659.0" prefWidth="543.0" style="-fx-background-color: linear-gradient(to right top, #241044, #36246c, #433b98, #4b54c7, #486ff9); visibility: true; -fx-background-radius: 10 0 0 10;" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0">
+                        <AnchorPane fx:id="anchorPane" onSwipeLeft="#hideVideo" prefHeight="659.0" prefWidth="543.0" style="-fx-background-color: linear-gradient(to right top, #241044, #36246c, #433b98, #4b54c7, #486ff9); visibility:false ; -fx-background-radius: 10 0 0 10;" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0">
                             <children>
                                 <Button mnemonicParsing="false" onMouseClicked="#hideVideo" prefHeight="38.0" prefWidth="45.0" style="-fx-background-radius: 0; -fx-background-insets: 0; -fx-background-color: transparent;" text="X" textFill="WHITE">
                                     <font>

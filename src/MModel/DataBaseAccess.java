@@ -31,12 +31,12 @@ import java.util.concurrent.TimeUnit;
 public class DataBaseAccess {
     public String firebase_baseUrl = "https://wetravel-1591a.firebaseio.com/"; //
     public String firebase_apiKey = "AIzaSyCO06MSKvbYLnPGzBYPKpX8SlcPpiJupA8";
-    private static DataBaseAccess instance;
     private User user;
 
-    static {
-        instance = new DataBaseAccess();
-    }
+    private static DataBaseAccess instance;
+    private DataBaseAccess() {}
+    static {instance = new DataBaseAccess();}
+    public static synchronized DataBaseAccess getInstance() {return instance;}
 
     public String getVideoPlayerLink(VideoMarker vm) throws IOException {//retrieve link for media player from videoMarker
         FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
@@ -51,14 +51,6 @@ public class DataBaseAccess {
         return storage.signUrl(blobInfo, 1, TimeUnit.MINUTES, Storage.SignUrlOption.withV4Signature()).toString();
     }
 
-    private DataBaseAccess() {
-
-    }
-
-    public static synchronized DataBaseAccess getInstance() {
-        return instance;
-    }
-
     public boolean instantiateUser(boolean auntification, String login, String password) throws FirebaseException, JacksonUtilityException, PasswordIncorectException, IOException, MailExistException {
         if (auntification)
             return logining(login, password);
@@ -68,14 +60,15 @@ public class DataBaseAccess {
     private boolean logining(String login, String password) throws FirebaseException, IOException, PasswordIncorectException {
         if (!checkLoginPassword(login, password))
             throw new PasswordIncorectException();
-
         user = new User(login, password, getUserLink(login));
         User tempUser = this.getUserInfo(user.getDataBaseReference());
-        user = new User(tempUser.getUserName(), tempUser.getProfilePhotoReference(), tempUser.getDataBaseReference(), password, login, tempUser.getUserInfo());
+        user = new User(tempUser.getUserName(), tempUser.getProfilePhotoReference(), tempUser.getDataBaseReference(),
+                password, login, tempUser.getUserInfo());
         return true;
     }
 
-    private boolean register(String login, String password) throws FirebaseException, JacksonUtilityException, MailExistException, UnsupportedEncodingException {
+    private boolean register(String login, String password) throws FirebaseException, JacksonUtilityException,
+            MailExistException, UnsupportedEncodingException {
         if (checkMailExistence(login)) {
             throw new MailExistException();
         }
@@ -100,8 +93,6 @@ public class DataBaseAccess {
     }
 
     private boolean checkLoginPassword(String email, String password) throws FirebaseException, UnsupportedEncodingException { //for logining
-        //вместе с проверкой пароля в метод checkEverything
-
         Firebase firebase = new Firebase(firebase_baseUrl);
         FirebaseResponse response = firebase.get();
         Map<String, Object> dataMap = response.getBody();
@@ -121,7 +112,6 @@ public class DataBaseAccess {
     }
 
     private boolean checkMailExistence(String email) throws FirebaseException, UnsupportedEncodingException {//for registration
-
         Firebase firebase = new Firebase(firebase_baseUrl);
         FirebaseResponse response = firebase.get();
         Map<String, Object> dataMap = response.getBody();
@@ -214,8 +204,8 @@ public class DataBaseAccess {
         return null;
     }
 
-    public ArrayList<VideoMarker> getUserVideos() throws IOException, JacksonUtilityException, PasswordIncorectException, FirebaseException, MailExistException {
-        instantiateUser(true,"maksymenko1111@gmail.com","maksymenko1111@gmail.com");
+    public ArrayList<VideoMarker> getUserVideos() throws IOException {
+        //instantiateUser(true,"maksymenko1111@gmail.com","maksymenko1111@gmail.com");
         ArrayList<VideoMarker> lVm = new ArrayList<VideoMarker>();
         FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
@@ -264,28 +254,20 @@ public class DataBaseAccess {
     }
 
     public void uploadVideo(String videoName, String pathToVideo, String coordinates) throws Exception {
-        if (user == null)
-            throw new NullPointerException("User is not initialized");
+        if (user == null) throw new NullPointerException("User is not initialized");
         FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
-        GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
-                .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
+        GoogleCredentials credentials = GoogleCredentials.fromStream(stream).createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
         stream.close();
         Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
-        // The ID of your GCP project
-        //String projectId = "wetravel-1591a";
-        // The ID of your GCS bucket
         String bucketName = "wetravel-1591a.appspot.com";
-        // The ID of your GCS object
         String objectName = user.getDataBaseReference() + "/" + videoName;
-        // The path to your file to upload
-        String filePath = pathToVideo;//
+        String filePath = pathToVideo;
         BlobId blobId = BlobId.of(bucketName, objectName);
         Map<String, String> newMetaData = new HashMap<>();
         newMetaData.put("user_id", user.getDataBaseReference());
         newMetaData.put("position", coordinates);
         Calendar cal = new GregorianCalendar();
         newMetaData.put("uploadingTime", cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.YEAR) + " " + cal.get(Calendar.HOUR) + ":" + cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND));
-        //System.out.println(cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.YEAR) + " " + cal.get(Calendar.HOUR) + ":" + cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND));
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMetadata(newMetaData).setContentType(String.valueOf(MediaType.MP4_VIDEO)).build();
         storage.create(blobInfo, Files.readAllBytes(Paths.get(filePath)));
     }
@@ -311,7 +293,7 @@ public class DataBaseAccess {
     }
 
     public void uploadUserPhoto(String pathToPhoto) throws IOException {//Пользователь выберает фото// , после чего фото хагружается на сервер, все фото пользователей
-        //имеют одинаковое название - profile_img
+
         if (user == null)
             throw new NullPointerException("User is not initialized");
         FileInputStream stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
@@ -384,10 +366,9 @@ public class DataBaseAccess {
         blob.downloadTo(Paths.get(".//"));
     }
 
-    public boolean checkCredentials() {//проверяет есть ли файл с логином паролем у клиента
+    public boolean checkCredentials() {
         return new File(".//credentials.tmp").exists();
     }
-
     public void createCredentialsTmp() { //создать файл с логином паролем
         try (FileOutputStream fos = new FileOutputStream(".//credentials.tmp")) {
             // перевод строки в байты
@@ -401,11 +382,9 @@ public class DataBaseAccess {
             System.out.println(ex.getMessage());
         }
     }
-
     public void deleteCredentials() {
         new File(".//credentials.tmp").delete();
     }
-
     public String getCredentialsFromFile() { //возвращает логин и пароль в строке типа: "login/password"
         String credentials;
         try (FileInputStream fin = new FileInputStream(".//credentials.tmp")) {
@@ -421,7 +400,7 @@ public class DataBaseAccess {
 
     public ObservableList<VideoMarker> markdersForMap() {
         ObservableList<VideoMarker> markers = FXCollections.observableArrayList();
-        ;
+
         FileInputStream stream = null;
         try {
             stream = new FileInputStream("./src/resources/wetravel-1591a-1fa332112603.json");
@@ -441,13 +420,8 @@ public class DataBaseAccess {
             e.printStackTrace();
         }
         Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
-        // The ID of your GCP project
-        //String projectId = "wetravel-1591a";
-        // The ID of your GCS bucket
         String bucketName = "wetravel-1591a.appspot.com";
-        // The ID of your GCS object
         Bucket bucket = storage.get(bucketName);
-        //System.out.println(bucket.get("-MM7aIc-jFBHl_Qr33S8/ghhv").getMetadata().get("position"));
         Page<Blob> pblob = bucket.list();
         for (Blob blob : pblob.iterateAll()) {
             if (blob.getName().split("/")[1].equals("profile_img"))
@@ -473,15 +447,23 @@ public class DataBaseAccess {
 
     public String getCountryCoordinates(String countryName) throws IOException, ParseException {
         JSONParser parser = new JSONParser();
+        JSONParser parserCity = new JSONParser();
         Object obj = parser.parse(new FileReader("./src/resources/countries.json"));
+        Object objCities = parser.parse(new FileReader("./src/resources/cities.json"));
         JSONArray jsonArr = (JSONArray) obj;
         for (int i = 0; i < jsonArr.size(); i++) {
             if (((JSONObject) jsonArr.get(i)).get("name").equals(countryName)) {
                 String latlng = ((JSONObject) jsonArr.get(i)).get("latlng").toString();
                 latlng = latlng.substring(1, latlng.length() - 1);
                 return new StringBuilder(latlng.split(",")[0] + "/" + latlng.split(",")[1]).toString();
-            }
-        }
+            }}
+        jsonArr = (JSONArray) objCities;
+        for (int i = 0; i < jsonArr.size(); i++) {
+            if (((JSONObject) jsonArr.get(i)).get("name").equals(countryName)) {
+                String lat = ((JSONObject) jsonArr.get(i)).get("lat").toString();
+                String lng = ((JSONObject) jsonArr.get(i)).get("lng").toString();
+                return new StringBuilder(lat + "/" + lng).toString();}}
         return null;
     }
+
 }

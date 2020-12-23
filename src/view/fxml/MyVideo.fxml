@@ -2,11 +2,31 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="412.0" prefWidth="420.0" style="-fx-background-color: linear-gradient(to right top, #241044, #36246c, #433b98, #4b54c7, #486ff9);" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.fxml.MyVideo">
-   <children>
-      <Button graphicTextGap="0.0" layoutX="354.0" layoutY="7.0" mnemonicParsing="false" fx:id="close" prefHeight="12.0" prefWidth="61.0" style="-fx-background-radius: 100; -fx-background-color: #486ff9;" text="X" textAlignment="CENTER" textFill="WHITE" />
-      <ListView fx:id="listView" layoutX="13.0" layoutY="40.0" prefHeight="332.0" prefWidth="395.0" style="-fx-background-color: linear-gradient(to right top, #241044, #36246c, #433b98, #4b54c7, #486ff9); -fx-text-fill: white; -fx-fill: #9bbaff;" />
-      <Button contentDisplay="CENTER" layoutX="129.0" layoutY="378.0" mnemonicParsing="false" fx:id="delete" prefHeight="25.0" prefWidth="163.0" style="-fx-background-radius: 20; -fx-text-fill: white;" text="Remove" textAlignment="CENTER" />
-   </children>
-</AnchorPane>
+    <?import com.jfoenix.controls.JFXListView?>
+    <AnchorPane prefHeight="412.0" prefWidth="420.0"
+            style="-fx-background-color: linear-gradient(to right top, #241044, #36246c, #433b98, #4b54c7, #486ff9);"
+            xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="view.fxml.MyVideo">
+        <children>
+            <Button fx:id="close" graphicTextGap="0.0" layoutX="354.0" layoutY="7.0" mnemonicParsing="false"
+                prefHeight="12.0" prefWidth="61.0" style="-fx-background-radius: 100; -fx-background-color: #486ff9;"
+                text="X" textAlignment="CENTER" textFill="WHITE"/>
+            <JFXListView fx:id="listView" layoutX="13.0" layoutY="40.0" prefHeight="332.0" prefWidth="395.0" style="
+                -fx-text-fill: white;
+                -fx-background-insets: 0.0;
+                -fx-fill: #0d45ff;
+                -fx-background-color: linear-gradient(to right top, #241044, #36246c, #433b98,
+                #4b54c7, #486ff9); -fx-text-fill: white; -fx-fill: #9bbaff;"/>
+            <Button fx:id="delete" contentDisplay="CENTER" layoutX="129.0" layoutY="378.0" mnemonicParsing="false"
+                prefHeight="25.0" prefWidth="163.0"
+                style="-fx-background-radius: 20; -fx-text-fill: white; -fx-background-color: transparent;"
+                text="Remove" textAlignment="CENTER"/>
+            <Label layoutX="16.0" layoutY="8.0" prefHeight="17.0" prefWidth="227.0" text="My videos" textFill="WHITE">
+                <font>
+                    <Font name="MS Outlook" size="20.0"/>
+                </font>
+            </Label>
+        </children>
+    </AnchorPane>

@@ -11,17 +11,14 @@ public class AcceptWindow extends Window {
     @FXML
     public Label string;
     public Consumer consumer;
-
     public void onOk() {
         consumer.accept(string);
         onNot();
     }
-
     public void onNot() {
         Stage stage = (Stage) this.string.getScene().getWindow();
         stage.close();
     }
-
     public void initialize(Window window, String str, Consumer consumer){
         this.string.setText(str);
         this.consumer = consumer;
